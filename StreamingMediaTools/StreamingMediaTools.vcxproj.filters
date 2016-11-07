@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="RTSP">
+      <UniqueIdentifier>{2a57180a-9c11-415a-869a-b26d29fb00c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTMP">
+      <UniqueIdentifier>{3224276f-51eb-422d-92c2-365d7171dfd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CLogFile">
+      <UniqueIdentifier>{a344f8e4-ad25-411c-b3a1-4e1db02377cc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="res\StreamingMediaTools.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\StreamingMediaTools.ico">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StreamingMediaTools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamingMediaToolsDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pxCommonDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pxRTSPAnalyzerDlg.h">
+      <Filter>RTSP</Filter>
+    </ClInclude>
+    <ClInclude Include="pxRTMPAnalyzerDlg.h">
+      <Filter>RTMP</Filter>
+    </ClInclude>
+    <ClInclude Include="CLogFile\pxLogFile.h">
+      <Filter>CLogFile</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StreamingMediaTools.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamingMediaToolsDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pxCommonDef.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pxRTSPAnalyzerDlg.cpp">
+      <Filter>RTSP</Filter>
+    </ClCompile>
+    <ClCompile Include="pxRTMPAnalyzerDlg.cpp">
+      <Filter>RTMP</Filter>
+    </ClCompile>
+    <ClCompile Include="CLogFile\pxLogFile.cpp">
+      <Filter>CLogFile</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="StreamingMediaTools.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
