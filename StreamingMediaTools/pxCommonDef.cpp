@@ -133,3 +133,29 @@ int DeleteRunningProcess(LPCTSTR in_lpstrClientName)
 
 	return 0;
 }
+
+// 获取程序所在的目录
+// 比如全路径为D:\Project\Source\StreamDataServer\bin\pxMediaServerApp.exe
+// 返回结果D:\Project\Source\StreamDataServer\bin
+
+void GetAppPath(char *out_pszAppPath)
+{
+	if (NULL == out_pszAppPath)
+	{
+		g_logFile.WriteLogInfo("GetAppPath:: out_pszAppPath is NULL");
+
+		return ;
+	}
+
+	char szAppPath[MAX_PATH] = {0};
+
+	DWORD dwRet = GetModuleFileNameA(NULL, szAppPath, MAX_PATH);
+	if (dwRet == MAX_PATH)
+	{
+		strcpy(szAppPath, ".");
+	}
+
+	(strrchr(szAppPath,'\\'))[0] = '\0';
+
+	strcpy(out_pszAppPath, szAppPath);
+}

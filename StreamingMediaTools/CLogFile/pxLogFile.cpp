@@ -79,19 +79,23 @@ void CLogFile::WriteLog( CString in_strText, const char *in_szFile, const unsign
 	GetCurTime();
 	FILE *fp = NULL;
 	fp = fopen(m_szLogFileName, "at");
-	fprintf(fp,"[");
-	fprintf(fp,m_szCurTime);
-	fprintf(fp,"] ");
-	
+	if (NULL != fp)
+	{
+		fprintf(fp,"[");
+		fprintf(fp,m_szCurTime);
+		fprintf(fp,"] ");
+
 #ifdef _UNICODE
-	fprintf(fp, "%S ", in_strText.GetBuffer(in_strText.GetLength() * 2));
+		fprintf(fp, "%S ", in_strText.GetBuffer(in_strText.GetLength() * 2));
 #else
-	fprintf(fp, "%s ", in_strText.GetBuffer(in_strText.GetLength()));
+		fprintf(fp, "%s ", in_strText.GetBuffer(in_strText.GetLength()));
 #endif // End of #ifdef _UNICODE
-	fprintf(fp,"{%s(%d)}", in_szFile, in_ulLine);
-	fprintf(fp,"\n");
-	fflush(fp);
-	fclose(fp);
+		fprintf(fp,"{%s(%d)}", in_szFile, in_ulLine);
+		fprintf(fp,"\n");
+		fflush(fp);
+		fclose(fp);
+	}
+	
 	::LeaveCriticalSection(&m_cs);  
 #endif // End of #if WRITE_LOG_STATE
 }
@@ -123,14 +127,17 @@ void CLogFile::WriteLogInfo(const char* kszFormat, ...)
 
 	GetCurTime();
 	FILE *fp = fopen(m_szLogFileName, "at");
-	fprintf(fp,"[");
-	fprintf(fp,m_szCurTime);
-	fprintf(fp,"] ");
-	fprintf(fp, "%s ", m_szBuf);
-	//fprintf(fp,"{%s(%d)}", __FILE__, __LINE__);
-	fprintf(fp,"\n");
-	fflush(fp);
-	fclose(fp);
+	if (NULL != fp)
+	{
+		fprintf(fp,"[");
+		fprintf(fp,m_szCurTime);
+		fprintf(fp,"] ");
+		fprintf(fp, "%s ", m_szBuf);
+		//fprintf(fp,"{%s(%d)}", __FILE__, __LINE__);
+		fprintf(fp,"\n");
+		fflush(fp);
+		fclose(fp);
+	}
 
 	::LeaveCriticalSection(&m_cs);  
 

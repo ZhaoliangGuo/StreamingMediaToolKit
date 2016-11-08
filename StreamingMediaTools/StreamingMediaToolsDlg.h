@@ -49,4 +49,10 @@ public:
 	afx_msg void OnBnClickedButtonTest();
 
 	CRITICAL_SECTION  m_csListBox;             // ÁÙ½çÇø
+	afx_msg void OnRightMenuMinimize();
+	afx_msg void OnRightMenuOpenLogDir();
+	afx_msg void OnRightMenuOpenTodayLog();
+	afx_msg void OnRightMenuOpenInstallDir();
+	afx_msg void OnRightMenuExit();
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };

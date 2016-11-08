@@ -2279,7 +2279,8 @@ AVC("NetStream.Play.UnpublishNotify");
 static const AVal av_NetStream_Publish_Start = AVC("NetStream.Publish.Start");
 
 /* Returns 0 for OK/Failed/error, 1 for 'Stop or Complete' */
-static int HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
+static int
+HandleInvoke(RTMP *r, const char *body, unsigned int nBodySize)
 {
   AMFObject obj;
   AVal method;

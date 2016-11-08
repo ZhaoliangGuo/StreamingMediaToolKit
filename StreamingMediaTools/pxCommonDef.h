@@ -8,6 +8,8 @@ using namespace std;
 
 // Log
 #include ".\\CLogFile\\pxLogFile.h"
+#include ".\\CReportCtrl\\pxReportCtrl.h"
+
 extern CLogFile g_logFile;
 extern CString  g_strMsg;
 
@@ -35,3 +37,5 @@ extern void g_GetLastError();
 extern BOOL IsFileExist(LPCTSTR lpFile);
 extern CString GetServPort();
 extern int DeleteRunningProcess(LPCTSTR in_lpstrClientName);
+
+extern void GetAppPath(char *out_pszAppPath);

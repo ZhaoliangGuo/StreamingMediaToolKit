@@ -22,6 +22,9 @@
     <Filter Include="CLogFile">
       <UniqueIdentifier>{a344f8e4-ad25-411c-b3a1-4e1db02377cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CReportCtrl">
+      <UniqueIdentifier>{2c06628c-675f-4975-abfd-cd63f67da713}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -60,6 +63,9 @@
     <ClInclude Include="CLogFile\pxLogFile.h">
       <Filter>CLogFile</Filter>
     </ClInclude>
+    <ClInclude Include="CReportCtrl\pxReportCtrl.h">
+      <Filter>CReportCtrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StreamingMediaTools.cpp">
@@ -82,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="CLogFile\pxLogFile.cpp">
       <Filter>CLogFile</Filter>
+    </ClCompile>
+    <ClCompile Include="CReportCtrl\pxReportCtrl.cpp">
+      <Filter>CReportCtrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

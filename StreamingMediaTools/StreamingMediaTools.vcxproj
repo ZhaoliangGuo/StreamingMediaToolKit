@@ -118,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLogFile\pxLogFile.h" />
+    <ClInclude Include="CReportCtrl\pxReportCtrl.h" />
     <ClInclude Include="pxCommonDef.h" />
     <ClInclude Include="pxRTMPAnalyzerDlg.h" />
     <ClInclude Include="pxRTSPAnalyzerDlg.h" />
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CLogFile\pxLogFile.cpp" />
+    <ClCompile Include="CReportCtrl\pxReportCtrl.cpp" />
     <ClCompile Include="pxCommonDef.cpp" />
     <ClCompile Include="pxRTMPAnalyzerDlg.cpp" />
     <ClCompile Include="pxRTSPAnalyzerDlg.cpp" />

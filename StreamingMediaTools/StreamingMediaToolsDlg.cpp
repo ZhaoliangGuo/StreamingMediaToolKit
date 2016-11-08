@@ -68,6 +68,12 @@ BEGIN_MESSAGE_MAP(CStreamingMediaToolsDlg, CDialogEx)
 	ON_NOTIFY(NM_CLICK, IDC_MAINTAB,        &CStreamingMediaToolsDlg::OnNMClickTab1)
 	ON_MESSAGE(WM_ADD_LOG_TO_LIST,          &CStreamingMediaToolsDlg::AddLog2List)
 	ON_BN_CLICKED(IDC_CHECK_CLEAR_LOG_LIST, &CStreamingMediaToolsDlg::OnClearLogList)
+	ON_COMMAND(ID_RIGHT_MENU_MINIMIZE, &CStreamingMediaToolsDlg::OnRightMenuMinimize)
+	ON_COMMAND(ID_RIGHT_MENU_OPEN_LOG_DIR, &CStreamingMediaToolsDlg::OnRightMenuOpenLogDir)
+	ON_COMMAND(ID_RIGHT_MENU_OPEN_TODAY_LOG, &CStreamingMediaToolsDlg::OnRightMenuOpenTodayLog)
+	ON_COMMAND(ID_RIGHT_MENU_OPEN_INSTALL_DIR, &CStreamingMediaToolsDlg::OnRightMenuOpenInstallDir)
+	ON_COMMAND(ID_RIGHT_MENU_EXIT, &CStreamingMediaToolsDlg::OnRightMenuExit)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 
@@ -259,14 +265,36 @@ LRESULT CStreamingMediaToolsDlg::AddLog2List( WPARAM wParam, LPARAM lParam )
 
 	char *pszMsg = (char *)lParam;
 
-	CString strMsg;
-	strMsg.Format("%s", pszMsg);
-	if (strMsg == "")
+	if (NULL == pszMsg)
 	{
 		::LeaveCriticalSection(&m_csListBox); 
 
 		return -1;
 	}
+
+	CString strMsg;
+
+	//int nLen = strlen(pszMsg);
+	char szMsgBuffer[1024] = {0};
+	strcpy_s(szMsgBuffer, 1024, pszMsg);
+
+	try
+	{
+		strMsg.Format("%s", szMsgBuffer);
+	}
+	catch (CException* e)
+	{
+		::LeaveCriticalSection(&m_csListBox); 
+
+		return -1;
+	}
+
+	/*if (strMsg == "")
+	{
+		::LeaveCriticalSection(&m_csListBox); 
+
+		return -1;
+	}*/
 
 	CString strGmt = "[" + GetCurTime();
 	strGmt += "] ";
@@ -317,3 +345,85 @@ void CStreamingMediaToolsDlg::TestAddLog()
 }
 
 
+void CStreamingMediaToolsDlg::OnRightMenuMinimize()
+{
+	AfxGetMainWnd()->ShowWindow(SW_MINIMIZE);
+}
+
+
+void CStreamingMediaToolsDlg::OnRightMenuOpenLogDir()
+{
+	char szAppPath[MAX_PATH] = {0};
+	GetAppPath(szAppPath);
+	strcat(szAppPath, ".\\LogFile\\");
+
+	ShellExecuteA(NULL, "open", szAppPath, NULL, NULL, SW_NORMAL);
+}
+
+
+void CStreamingMediaToolsDlg::OnRightMenuOpenTodayLog()
+{
+	char szAppPath[MAX_PATH] = {0};
+	GetAppPath(szAppPath);
+
+	//读取时间
+	SYSTEMTIME   time;
+	GetLocalTime(&time);
+
+	char strLogFilePath[_MAX_PATH]      = {0};
+
+	sprintf_s(strLogFilePath,
+		_MAX_PATH, 
+		".\\LogFile\\LogFile_%4d-%02d-%02d.txt", 
+		szAppPath,
+		time.wYear, 
+		time.wMonth , 
+		time.wDay);
+
+	CString strLogFileName;
+	strLogFileName.Format("%S", strLogFilePath);
+
+	if (IsFileExist(strLogFileName))
+	{
+		ShellExecute(NULL, "open", strLogFileName, NULL, NULL, SW_SHOWNORMAL);
+	}
+	else
+	{
+		AfxMessageBox("暂时未生成日志文件， 请确认.");
+	}
+}
+
+void CStreamingMediaToolsDlg::OnRightMenuOpenInstallDir()
+{
+	char szAppPath[MAX_PATH] = {0};
+	GetAppPath(szAppPath);
+	ShellExecuteA(NULL, "open", szAppPath, NULL, NULL, SW_NORMAL);
+}
+
+
+void CStreamingMediaToolsDlg::OnRightMenuExit()
+{
+	if (IDYES == ::MessageBox(NULL, "您确认要退出流媒体分析工具吗?", "退出确认", MB_YESNO))
+	{
+		CDialog::OnOK();	
+	}
+}
+
+void CStreamingMediaToolsDlg::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+{
+	CMenu popMenu;
+	popMenu.LoadMenu(IDR_MENU_MAIN_RIGHT); //载入菜单
+
+	CMenu *pPopup = NULL;
+	pPopup=popMenu.GetSubMenu(0); //获得子菜单指针
+
+	pPopup->EnableMenuItem(ID_RIGHT_MENU_MINIMIZE,         MF_BYCOMMAND|MF_ENABLED); 
+	pPopup->EnableMenuItem(ID_RIGHT_MENU_OPEN_INSTALL_DIR, MF_BYCOMMAND|MF_ENABLED); 
+	pPopup->EnableMenuItem(ID_RIGHT_MENU_OPEN_LOG_DIR,     MF_BYCOMMAND|MF_ENABLED); 
+	pPopup->EnableMenuItem(ID_RIGHT_MENU_OPEN_TODAY_LOG,   MF_BYCOMMAND|MF_ENABLED); 
+	pPopup->EnableMenuItem(ID_RIGHT_MENU_EXIT,             MF_BYCOMMAND|MF_ENABLED); 
+
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x, point.y, this);
+	pPopup->Detach();
+	popMenu.DestroyMenu();
+}

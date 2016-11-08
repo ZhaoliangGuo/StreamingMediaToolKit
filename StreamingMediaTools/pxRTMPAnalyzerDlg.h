@@ -1,5 +1,8 @@
 #pragma once
+#include "afxcmn.h"
+#include "pxCommonDef.h"
 
+const int  WM_ADD_PACKAGE_TO_LIST = WM_USER + 2001;
 
 // CPxRTMPAnalyzerDlg ¶Ô»°¿ò
 
@@ -25,4 +28,10 @@ public:
 	virtual BOOL OnInitDialog();
 	void Init();
 	void SaveConfig();
+	afx_msg LRESULT AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam );
+	void TestAddPackage2ListCtrl();
+	CReportCtrl m_lcAgentClient;
+	afx_msg void OnBnClickedButtonRtmpTest();
+	int m_nLastVideoTimestamp;
+	CRITICAL_SECTION  m_csListCtrl; 
 };
