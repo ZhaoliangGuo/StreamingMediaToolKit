@@ -30,8 +30,10 @@ public:
 	void SaveConfig();
 	afx_msg LRESULT AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam );
 	void TestAddPackage2ListCtrl();
-	CReportCtrl m_lcAgentClient;
+	CReportCtrl m_lcPackage;
 	afx_msg void OnBnClickedButtonRtmpTest();
 	int m_nLastVideoTimestamp;
 	CRITICAL_SECTION  m_csListCtrl; 
+	CString m_strAVNotSyncThreshold; // 音视频不同步的过滤阈值(毫秒)
+	afx_msg void OnBnClickedCheckClearPackageList();
 };

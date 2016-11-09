@@ -11,6 +11,11 @@
 #include <time.h>
 #include "pxCommonDef.h"
 
+/*
+References:
+http://blog.chinaunix.net/uid-15063109-id-4273162.html
+*/
+
 int InitSockets()
 {
 #ifdef WIN32
@@ -39,8 +44,10 @@ IMPLEMENT_DYNAMIC(CPxRTMPAnalyzerDlg, CDialogEx)
 CPxRTMPAnalyzerDlg::CPxRTMPAnalyzerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CPxRTMPAnalyzerDlg::IDD, pParent)
 	, m_strRTMP_URL(_T(""))
+	, m_strAVNotSyncThreshold(_T(""))
 {
-	m_strRTMP_URL = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+	m_strRTMP_URL        = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
+	m_strAVNotSyncThreshold = "300";
 	InitSockets();
 	m_nLastVideoTimestamp = -1;
 	::InitializeCriticalSection(&m_csListCtrl);   //初始化临界区
@@ -57,7 +64,8 @@ void CPxRTMPAnalyzerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_RTMP_URL, m_strRTMP_URL);
-	DDX_Control(pDX, IDC_LIST_RTMP_FRAME, m_lcAgentClient);
+	DDX_Control(pDX, IDC_LIST_RTMP_FRAME, m_lcPackage);
+	DDX_Text(pDX, IDC_EDIT_AV_NOT_SYNC_THRESHOLD, m_strAVNotSyncThreshold);
 }
 
 BEGIN_MESSAGE_MAP(CPxRTMPAnalyzerDlg, CDialogEx)
@@ -65,6 +73,7 @@ BEGIN_MESSAGE_MAP(CPxRTMPAnalyzerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_STOP_RECORD,  &CPxRTMPAnalyzerDlg::OnBnClickedButtonStopRecord)
 	ON_MESSAGE(WM_ADD_PACKAGE_TO_LIST,     &CPxRTMPAnalyzerDlg::AddPackage2ListCtrl)
 	ON_BN_CLICKED(IDC_BUTTON_RTMP_TEST, &CPxRTMPAnalyzerDlg::OnBnClickedButtonRtmpTest)
+	ON_BN_CLICKED(IDC_CHECK_CLEAR_PACKAGE_LIST, &CPxRTMPAnalyzerDlg::OnBnClickedCheckClearPackageList)
 END_MESSAGE_MAP()
 
 // CPxRTMPAnalyzerDlg 消息处理程序
@@ -87,6 +96,8 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStartRecord()
 	//GetDlgItem(IDC_BUTTON_STOP_RECORD)->EnableWindow(TRUE);
 
 	m_nLastVideoTimestamp = 0;
+
+	m_lcPackage.DeleteAllItems();
 
 	AfxBeginThread((AFX_THREADPROC)ThreadStartRecord,
 		this,
@@ -144,13 +155,37 @@ DWORD WINAPI ThreadStartRecord(LPVOID pParam)
 		sSystemTime.wMonth, 
 		sSystemTime.wDay,
 		sSystemTime.wHour,
-		sSystemTime.wSecond,
+		sSystemTime.wMinute,
+		sSystemTime.wSecond);
+
+	char szH264FileName[_MAX_PATH] = {0};
+	sprintf_s(szH264FileName,
+		_MAX_PATH, 
+		"%s\\rtmp_stream_%4d%02d%02d%02d%02d%02d.264",
+		szAppPath,
+		sSystemTime.wYear, 
+		sSystemTime.wMonth, 
+		sSystemTime.wDay,
+		sSystemTime.wHour,
+		sSystemTime.wMinute,
 		sSystemTime.wSecond);
 
 	FILE *fp=fopen(szFileName, "wb");
 	if (!fp)
 	{
 		g_strMsg.Format("Open File Error(%s).", szFileName);
+		::PostMessage(g_hAppWnd, WM_ADD_LOG_TO_LIST, NULL, (LPARAM)g_strMsg.GetBuffer());
+
+		RTMP_LogPrintf("Open File Error.\n");
+		//CleanupSockets();
+
+		return -1;
+	}
+
+	FILE *fpH264 = fopen(szH264FileName, "wb");
+	if (!fp)
+	{
+		g_strMsg.Format("Open File Error(%s).", szH264FileName);
 		::PostMessage(g_hAppWnd, WM_ADD_LOG_TO_LIST, NULL, (LPARAM)g_strMsg.GetBuffer());
 
 		RTMP_LogPrintf("Open File Error.\n");
@@ -229,6 +264,8 @@ DWORD WINAPI ThreadStartRecord(LPVOID pParam)
 	poRTMPAnalyzerDlg->GetDlgItem(IDC_BUTTON_START_RECORD)->EnableWindow(FALSE);
 	poRTMPAnalyzerDlg->GetDlgItem(IDC_BUTTON_STOP_RECORD)->EnableWindow(TRUE);
 	poRTMPAnalyzerDlg->GetDlgItem(IDC_CHECK_DETAIL_ANALYZE)->EnableWindow(FALSE);
+	poRTMPAnalyzerDlg->GetDlgItem(IDC_EDIT_AV_NOT_SYNC_THRESHOLD)->EnableWindow(FALSE);
+	poRTMPAnalyzerDlg->GetDlgItem(IDC_CHECK_CLEAR_PACKAGE_LIST)->EnableWindow(FALSE);
 
 	g_strMsg.Format("开始录制. 文件名:%s, URL:%s", szFileName, szRTMP_URL);
 	::PostMessage(g_hAppWnd, WM_ADD_LOG_TO_LIST, NULL, (LPARAM)g_strMsg.GetBuffer());
@@ -243,6 +280,7 @@ DWORD WINAPI ThreadStartRecord(LPVOID pParam)
 	//RTMPPacket pkt = { 0 };
 
 	CString strMsgInfo("");
+	bool bFirst = true;
 
 	while (!g_bStop)
 	{
@@ -277,41 +315,115 @@ DWORD WINAPI ThreadStartRecord(LPVOID pParam)
 					|| pkt.m_packetType == RTMP_PACKET_TYPE_AUDIO
 					|| pkt.m_packetType == RTMP_PACKET_TYPE_INFO)
 				{
+					if (NULL != pkt.m_body)
+					{
+						::PostMessage(poRTMPAnalyzerDlg->GetSafeHwnd(), 
+							WM_ADD_PACKAGE_TO_LIST, 
+							NULL, 
+							(LPARAM)&pkt);
+					}
+
+					RTMP_Log(RTMP_LOGWARNING, "Received FLV packet before play()! Ignoring.");
+
+					if (pkt.m_packetType == RTMP_PACKET_TYPE_VIDEO)
+					{
+						/* FLV pkt too small */
+						if (pkt.m_nBodySize < 11)
+						{
+							continue;
+						}
+
+						static unsigned char const start_code[4] = {0x00, 0x00, 0x00, 0x01};
+
+						//int ret = fwrite(pc.m_body + 9, 1, pc.m_nBodySize-9, pf);
+
+						char *data = pkt.m_body;
+
+						if(bFirst) 
+						{
+							// AVCsequence header
+
+							// SPS
+							int spsnum     = data[10]&0x1f;
+							int number_sps = 11;
+							int count_sps  = 1;
+
+							while (count_sps<=spsnum)
+							{
+								int spslen = (data[number_sps]&0x000000FF)<<8 |(data[number_sps+1]&0x000000FF);
+
+								number_sps += 2;
+
+								fwrite(start_code, 1, 4, fpH264 );
+								fwrite(data+number_sps, 1, spslen, fpH264 );
+								fflush(fpH264);
+								
+								number_sps += spslen;
+								count_sps ++;
+							}
+
+							// PPS
+							int ppsnum     = data[number_sps]&0x1f;
+							int number_pps = number_sps+1;
+							int count_pps  = 1;
+
+							while (count_pps<=ppsnum)
+							{
+								int ppslen =(data[number_pps]&0x000000FF)<<8|data[number_pps+1]&0x000000FF;
+								number_pps += 2;
+
+								fwrite(start_code, 1, 4, fpH264 );
+								fwrite(data+number_pps, 1, ppslen, fpH264 );
+
+								fflush(fpH264);
+								
+								number_pps += ppslen;
+								count_pps ++;
+							}
+
+							bFirst = false;
+						} 
+						else 
+						{
+							// AVC NALU
+							int len = 0;
+							int num = 5;
+
+							while(num < pkt.m_nBodySize) 
+							{
+								len = (data[num]&0x000000FF)<<24|(data[num+1]&0x000000FF)<<16|(data[num+2]&0x000000FF)<<8|data[num+3]&0x000000FF;
+								num = num+4;
+
+								fwrite(start_code, 1, 4, fpH264 );
+								fwrite(data+num, 1, len, fpH264 );
+																
+								fflush(fpH264);
+
+								num = num + len;
+							}
+						}       
+					}
+
+					/*fwrite(pkt.m_body, 1, pkt.m_nBodySize, fp);
+					nCountBufSize += pkt.m_nBodySize;*/
+
+					dAudioVideoFrameCount++;
+
+					continue;
+				}
+				/* test */
+				/*else
+				{
 					::PostMessage(poRTMPAnalyzerDlg->GetSafeHwnd(), 
 						WM_ADD_PACKAGE_TO_LIST, 
 						NULL, 
 						(LPARAM)&pkt);
+				}*/
 
-					RTMP_Log(RTMP_LOGWARNING, "Received FLV packet before play()! Ignoring.");
+				// 处理一下这个数据包，其实里面就是处理服务端发送过来的各种消息等
+				RTMP_ClientPacket(rtmp, &pkt);
 
-					//RTMPPacket_Free(&pkt);
-
-					continue;
-				}
-
-				RTMP_ClientPacket(rtmp, &pkt);//处理一下这个数据包，其实里面就是处理服务端发送过来的各种消息等。直到接受到了play/publish
-
-				RTMPPacket_Free(&pkt);
-
-				//{
-				//	bool bIsKeyFrame = false;
-				//	if (result == 0x17)//I frame
-				//	{
-				//		bIsKeyFrame = true;
-				//	}
-				//	else if (result == 0x27)
-				//	{
-				//		bIsKeyFrame = false;
-				//	}
-				//}
-				//else if (pkt.m_packetType == RTMP_PACKET_TYPE_AUDIO)
-				//{
-
-				//}
-				//else if (pkt.m_packetType == RTMP_PACKET_TYPE_INFO)
-				//{
-
-				//}
+				// RTMPPacket_Free(&pkt);
 			}
 
 			RTMPPacket_Free(&pkt);
@@ -382,6 +494,12 @@ DWORD WINAPI ThreadStartRecord(LPVOID pParam)
 		fp = NULL;
 	}
 
+	if (fpH264)
+	{
+		fclose(fpH264);
+		fpH264 = NULL;
+	}
+
 	if(szBuffer)
 	{
 		free(szBuffer);
@@ -417,6 +535,8 @@ DWORD WINAPI ThreadStartRecord(LPVOID pParam)
 	poRTMPAnalyzerDlg->GetDlgItem(IDC_BUTTON_START_RECORD)->EnableWindow(TRUE);
 	poRTMPAnalyzerDlg->GetDlgItem(IDC_BUTTON_STOP_RECORD)->EnableWindow(TRUE);
 	poRTMPAnalyzerDlg->GetDlgItem(IDC_CHECK_DETAIL_ANALYZE)->EnableWindow(TRUE);
+	poRTMPAnalyzerDlg->GetDlgItem(IDC_EDIT_AV_NOT_SYNC_THRESHOLD)->EnableWindow(TRUE);
+	poRTMPAnalyzerDlg->GetDlgItem(IDC_CHECK_CLEAR_PACKAGE_LIST)->EnableWindow(TRUE);
 
 	//AfxMessageBox(szMsgBuffer);
 
@@ -431,6 +551,8 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStopRecord()
 	GetDlgItem(IDC_BUTTON_START_RECORD)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_STOP_RECORD)->EnableWindow(TRUE);
 	GetDlgItem(IDC_CHECK_DETAIL_ANALYZE)->EnableWindow(TRUE);
+	GetDlgItem(IDC_EDIT_AV_NOT_SYNC_THRESHOLD)->EnableWindow(TRUE);
+	GetDlgItem(IDC_CHECK_CLEAR_PACKAGE_LIST)->EnableWindow(TRUE);
 }
 
 BOOL CPxRTMPAnalyzerDlg::OnInitDialog()
@@ -459,20 +581,33 @@ void CPxRTMPAnalyzerDlg::Init()
 
 	m_strRTMP_URL.Format("%s", szRTMP_URL);
 
-	m_lcAgentClient.ModifyStyle(0, LVS_REPORT);
-	m_lcAgentClient.SetExtendedStyle(LVS_EX_FULLROWSELECT|LVS_EX_CHECKBOXES|LVS_EX_GRIDLINES);
+	char szAVNotSyncThreshold[_MAX_PATH] = {0};
+	GetPrivateProfileString("RTMP", 
+		"AVNotSyncThreshold", 
+		"300", 
+		szAVNotSyncThreshold, 
+		sizeof(szAVNotSyncThreshold), 
+		g_strConfFile);
+
+	m_strAVNotSyncThreshold.Format("%s", szAVNotSyncThreshold);
+
+	m_lcPackage.ModifyStyle(0, LVS_REPORT);
+	m_lcPackage.SetExtendedStyle(LVS_EX_FULLROWSELECT|LVS_EX_CHECKBOXES|LVS_EX_GRIDLINES);
 
 	/*m_lcAgentClient.SetBkColor(RGB(96,96,96)); 
 	m_lcAgentClient.SetTextBkColor(RGB(96,96,96));
 	m_lcAgentClient.SetTextColor(RGB(255,255,255));*/ // 显示字体的颜色
 
-	m_lcAgentClient.InsertColumn(0,_T("选择"),LVCFMT_RIGHT,50,-1);
-	m_lcAgentClient.InsertColumn(1,_T("Header Type/Length"),LVCFMT_LEFT,120,-1);
-	m_lcAgentClient.InsertColumn(2,_T("Package Type"),LVCFMT_CENTER,120,-1);
-	m_lcAgentClient.InsertColumn(3,_T("TimeStamp Type"),LVCFMT_CENTER,100,-1);
-	m_lcAgentClient.InsertColumn(4,_T("TimeStamp"),LVCFMT_CENTER,150,-1);
-	m_lcAgentClient.InsertColumn(5,_T("时间戳差值(基于上个视频时间戳)"), LVCFMT_CENTER,200,-1);
-	m_lcAgentClient.InsertColumn(6,_T("大小(字节)"), LVCFMT_LEFT,140,-1);
+	m_lcPackage.InsertColumn(0,_T("选择"),LVCFMT_RIGHT,80,-1);
+	m_lcPackage.InsertColumn(1,_T("头类型/长度"),LVCFMT_LEFT,100,-1);
+	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,80,-1);
+	m_lcPackage.InsertColumn(3,_T("时间戳类型"),LVCFMT_CENTER,80,-1);
+	m_lcPackage.InsertColumn(4,_T("时间戳"),LVCFMT_CENTER,100,-1);
+	m_lcPackage.InsertColumn(5,_T("时间戳差值"), LVCFMT_CENTER,150,-1);
+	m_lcPackage.InsertColumn(6,_T("大小(字节)"), LVCFMT_LEFT,100,-1);
+
+	((CButton*)GetDlgItem(IDC_CHECK_LOG_READ_INFO))->SetCheck(BST_CHECKED);
+	((CButton*)GetDlgItem(IDC_CHECK_DETAIL_ANALYZE))->SetCheck(BST_CHECKED);
 
 	UpdateData(FALSE);
 }
@@ -481,7 +616,8 @@ void CPxRTMPAnalyzerDlg::SaveConfig()
 {
 	UpdateData();
 
-	WritePrivateProfileString("RTMP", "URL", m_strRTMP_URL, g_strConfFile);
+	WritePrivateProfileString("RTMP", "URL",                m_strRTMP_URL,           g_strConfFile);
+	WritePrivateProfileString("RTMP", "AVNotSyncThreshold", m_strAVNotSyncThreshold, g_strConfFile);
 
 	UpdateData(FALSE);
 }
@@ -492,11 +628,16 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 
 	RTMPPacket *psRTMPPackage = (RTMPPacket *)lParam;
 
-	//int nCnt = m_lcRunningCompileTask.GetItemCount();
+	int nCnt = m_lcPackage.GetItemCount();
 
 	CString strDelta2LastVideoTs = "No";
 
-	int maxIndex = m_lcAgentClient.InsertItem(0, _T(""));//The line_pos is the Index value
+	int maxIndex = m_lcPackage.InsertItem(nCnt, _T(""));//The line_pos is the Index value
+
+	CString strIndex;
+	strIndex.Format("%d", nCnt + 1);
+
+	m_lcPackage.SetItemText(maxIndex, 0, strIndex);
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 0, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 0, RGB(96,96,96));*/
 
@@ -523,7 +664,7 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 		strHeaderType.Format("0x%2x", psRTMPPackage->m_headerType);
 	}
 	
-	m_lcAgentClient.SetItemText(maxIndex, 1, strHeaderType);
+	m_lcPackage.SetItemText(maxIndex, 1, strHeaderType);
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 1, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 1, RGB(96,96,96));*/
 
@@ -532,29 +673,60 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 	if (RTMP_PACKET_TYPE_AUDIO == psRTMPPackage->m_packetType)
 	{
 		strPackageType = "Audio";
+
+		/*for (int i = 0; i < 7; i++)
+		{
+			m_lcAgentClient.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));
+			m_lcAgentClient.SetItemBkColor(maxIndex,   i, RGB(51, 161,  201));
+		}*/
 	}
 	else if (RTMP_PACKET_TYPE_VIDEO == psRTMPPackage->m_packetType)
 	{
-		int nVideoType = psRTMPPackage->m_body[0];
-		if (nVideoType == 0x17)
-		{
-			strPackageType = "Video (I帧)";
-		}
-		else
-		{
-			strPackageType = "Video";
-		}
+		strPackageType = "##Video##";
 
-		if (-1 != m_nLastVideoTimestamp)
+		if (NULL != psRTMPPackage->m_body)
 		{
-			strDelta2LastVideoTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastVideoTimestamp);
-		}
-		else
-		{
-			strDelta2LastVideoTs = "No";
-		}
+			int nVideoType = psRTMPPackage->m_body[0];
+			if (nVideoType == 0x17)
+			{
+				strPackageType = "Video (I帧)";
 
-		m_nLastVideoTimestamp = psRTMPPackage->m_nTimeStamp;
+				for (int i = 0; i < 7; i++)
+				{
+					m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));		
+					m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(61, 145,  64));
+				}
+			}
+			else if ((nVideoType == 0x27))
+			{
+				strPackageType = "Video (P帧)";
+			}
+			else
+			{
+				strPackageType.Format("Video (0x%x)", nVideoType);
+			}
+
+			if (-1 != m_nLastVideoTimestamp)
+			{
+				strDelta2LastVideoTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastVideoTimestamp);
+			}
+			else
+			{
+				strDelta2LastVideoTs = "No";
+			}
+
+			m_nLastVideoTimestamp = psRTMPPackage->m_nTimeStamp;
+		}
+		else 
+		{
+			strDelta2LastVideoTs = "No. (m_body is NULL)";
+			for (int i = 0; i < 7; i++)
+			{		
+				m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));		
+				m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(255,  153, 18));
+				// m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(65,  105, 225));
+			}
+		}	
 	}
 	else if (RTMP_PACKET_TYPE_INFO == psRTMPPackage->m_packetType)
 	{
@@ -565,7 +737,7 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 		strPackageType.Format("%d", psRTMPPackage->m_packetType);
 	}
 
-	m_lcAgentClient.SetItemText(maxIndex, 2, strPackageType);
+	m_lcPackage.SetItemText(maxIndex, 2, strPackageType);
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 2, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 2, RGB(96,96,96));*/
 
@@ -579,14 +751,14 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 		strTimestampType = "绝对";
 	}
 
-	m_lcAgentClient.SetItemText(maxIndex, 3, strTimestampType);
+	m_lcPackage.SetItemText(maxIndex, 3, strTimestampType);
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 3, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 3, RGB(96,96,96));*/
 
 	CString strTimeStamp("");
 	strTimeStamp.Format("%d", psRTMPPackage->m_nTimeStamp);	
 
-	m_lcAgentClient.SetItemText(maxIndex, 4, strTimeStamp);
+	m_lcPackage.SetItemText(maxIndex, 4, strTimeStamp);
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 4, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 4, RGB(96,96,96));*/
 
@@ -600,16 +772,40 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 		{
 			strDelta2LastVideoTs = "No";
 		}
-
 	}
 
-	m_lcAgentClient.SetItemText(maxIndex, 5, strDelta2LastVideoTs);
-	/*m_lcAgentClient.SetItemTextColor(maxIndex, 5, RGB(255,255,255));
-	m_lcAgentClient.SetItemBkColor(maxIndex,5, RGB(96,96,96));*/
+	m_lcPackage.SetItemText(maxIndex, 5, strDelta2LastVideoTs);
 
-	m_lcAgentClient.SetItemText(maxIndex, 6, psRTMPPackage->m_nBodySize);
+	// > 200ms
+	int nAVNotSyncThreshold = _ttoi(m_strAVNotSyncThreshold);
+	if (_ttoi(strDelta2LastVideoTs) > nAVNotSyncThreshold)
+	{	
+		for (int i = 0; i < 7; i++)
+		{
+			m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255,255,255));
+			//m_lcAgentClient.SetItemBkColor(maxIndex,i, RGB(210, 105, 30));
+			m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(227, 23,  13));
+		}	
+	}
+	
+	m_lcPackage.SetItemText(maxIndex, 6, psRTMPPackage->m_nBodySize);
+
+	// > 16K 时
+	if (psRTMPPackage->m_nBodySize > 16 * 1024)
+	{
+		CString strBodySize;
+		strBodySize.Format("%d(%.2fKB)", psRTMPPackage->m_nBodySize, psRTMPPackage->m_nBodySize/1024.0);
+		m_lcPackage.SetItemText(maxIndex, 6, strBodySize);
+	}
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 6, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 6, RGB(0,0,255));*/
+
+	//设置最后一行被选中
+	m_lcPackage.SetItemState( m_lcPackage.GetItemCount() - 1, 
+		LVIS_ACTIVATING | LVIS_FOCUSED | LVIS_SELECTED,  
+		LVIS_SELECTED | LVIS_FOCUSED );
+	//滚动到最后一行
+	m_lcPackage.Scroll( CSize( 0, 100000 ) );
 
 	//::LeaveCriticalSection(&m_csListCtrl); 
 
@@ -637,4 +833,12 @@ void CPxRTMPAnalyzerDlg::TestAddPackage2ListCtrl()
 void CPxRTMPAnalyzerDlg::OnBnClickedButtonRtmpTest()
 {
 	TestAddPackage2ListCtrl();
+}
+
+void CPxRTMPAnalyzerDlg::OnBnClickedCheckClearPackageList()
+{
+	if (((CButton *)GetDlgItem(IDC_CHECK_CLEAR_PACKAGE_LIST))->GetCheck() == BST_CHECKED)
+	{
+		m_lcPackage.DeleteAllItems();
+	}
 }
