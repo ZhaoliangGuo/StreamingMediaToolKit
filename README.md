@@ -6,6 +6,7 @@ StreamingMediaTools for analyze the rtmp/rtsp stream.
 ## Already Do.
 
 - Save a rtmp stream to a .flv file.
+- Anaylze the timestamp of rtmp stream.
 
 ## ToDoList
 
