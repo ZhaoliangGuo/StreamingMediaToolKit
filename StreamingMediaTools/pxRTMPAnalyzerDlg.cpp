@@ -600,7 +600,7 @@ void CPxRTMPAnalyzerDlg::Init()
 
 	m_lcPackage.InsertColumn(0,_T("选择"),LVCFMT_RIGHT,80,-1);
 	m_lcPackage.InsertColumn(1,_T("头类型/长度"),LVCFMT_LEFT,100,-1);
-	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,80,-1);
+	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,100,-1);
 	m_lcPackage.InsertColumn(3,_T("时间戳类型"),LVCFMT_CENTER,80,-1);
 	m_lcPackage.InsertColumn(4,_T("时间戳"),LVCFMT_CENTER,100,-1);
 	m_lcPackage.InsertColumn(5,_T("时间戳差值"), LVCFMT_CENTER,150,-1);
@@ -730,7 +730,8 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 	}
 	else if (RTMP_PACKET_TYPE_INFO == psRTMPPackage->m_packetType)
 	{
-		strPackageType = "Info";
+		// metadata(notify)
+		strPackageType = "metadata";
 	}
 	else
 	{

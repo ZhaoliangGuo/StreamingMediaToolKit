@@ -1,0 +1,6 @@
+bin/StreamingMediaTools.exe
+ipch/streamingmediatools-36a26e1c/streamingmediatools-d7b24c1.ipch
+*.sdf
+StreamingMediaTools.sdf
+bin/StreamingMediaTools.pdb
+*.pdb
