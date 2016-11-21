@@ -17,6 +17,8 @@ extern CString  g_strConfFile;
 extern CString  g_strAppTitle;
 extern HWND     g_hAppWnd;         // 主界面句柄
 
+extern CString  g_strRecordFilePath;
+
 static HBRUSH static_brush_gray = ::CreateSolidBrush(RGB(96,96,96));
 
 const int WM_ADD_LOG_TO_LIST                    = WM_USER + 1001; // 添加日志到运行日志
@@ -39,3 +41,6 @@ extern CString GetServPort();
 extern int DeleteRunningProcess(LPCTSTR in_lpstrClientName);
 
 extern void GetAppPath(char *out_pszAppPath);
+
+extern BOOL pxIsDirExists(LPCTSTR pszPath);
+extern BOOL pxCreateDir(LPCTSTR pszPath);

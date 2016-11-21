@@ -4,6 +4,14 @@
 
 const int  WM_ADD_PACKAGE_TO_LIST = WM_USER + 2001;
 
+enum EPxTaskMode
+{
+	kePxTaskMode_Invalid,
+	kePxTaskMode_Record,
+	kePxTaskMode_Analyze,
+	kePxTaskMode_Cnt
+};
+
 // CPxRTMPAnalyzerDlg 对话框
 
 class CPxRTMPAnalyzerDlg : public CDialogEx
@@ -21,6 +29,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+
 public:
 	CString m_strRTMP_URL;
 	afx_msg void OnBnClickedButtonStartRecord();
@@ -33,7 +42,19 @@ public:
 	CReportCtrl m_lcPackage;
 	afx_msg void OnBnClickedButtonRtmpTest();
 	int m_nLastVideoTimestamp;
+	int m_nLastAudioTimestamp;
+
 	CRITICAL_SECTION  m_csListCtrl; 
 	CString m_strAVNotSyncThreshold; // 音视频不同步的过滤阈值(毫秒)
 	afx_msg void OnBnClickedCheckClearPackageList();
+
+public:
+	EPxTaskMode m_eTaskMode;
+	afx_msg void OnBnClickedButtonStartAnalzye();
+	afx_msg void OnBnClickedButtonStopAnalzye();
+	afx_msg void OnBnClickedCheckShowAudioInfo();
+
+	bool m_bShowVideo;
+	bool m_bShowAudio;
+	afx_msg void OnBnClickedCheckShowVideoInfo();
 };

@@ -5,8 +5,9 @@
 CLogFile g_logFile;
 CString  g_strMsg;
 
-CString  g_strConfFile   = ".\\config.ini";
-CString  g_strAppTitle   = "StreamingMediaTools.exe";
+CString  g_strConfFile       = ".\\config.ini";
+CString  g_strAppTitle       = "StreamingMediaTools.exe";
+CString  g_strRecordFilePath = "RecordFile";
 HWND     g_hAppWnd;         // Ö÷½çÃæ¾ä±ú
 
 CString GetCurTime()
@@ -158,4 +159,51 @@ void GetAppPath(char *out_pszAppPath)
 	(strrchr(szAppPath,'\\'))[0] = '\0';
 
 	strcpy(out_pszAppPath, szAppPath);
+}
+
+BOOL pxIsDirExists(LPCTSTR pszPath)
+{
+	DWORD dwAttributes = ::GetFileAttributes(pszPath);
+
+	if (dwAttributes == INVALID_FILE_ATTRIBUTES) {
+		DWORD dwErr = ::GetLastError();
+
+		if (dwErr == ERROR_ACCESS_DENIED)
+			return TRUE;
+
+		return FALSE;
+	}
+
+	return (dwAttributes & FILE_ATTRIBUTE_DIRECTORY) ? TRUE : FALSE;
+}
+
+BOOL pxCreateDir(LPCTSTR pszPath)
+{
+	CString str = pszPath;
+
+	// Add a '\' to the end of the path if there is not one
+	int k = str.GetLength(); 
+	if (k==0 || str[k-1]!=_T('\\')) str += _T('\\');
+
+	// We must create directory level by level, any better Win API available ?
+	bool bUNCPath = false;
+	CString strUNC = str.Left(2);
+	if (strUNC.CompareNoCase(_T("\\\\")) == 0)
+	{
+		bUNCPath = true;
+	}
+	int i = -1;
+	if (bUNCPath)
+	{
+		i = str.Find(_T("\\"),2);
+		i = str.Find(_T("\\"),i +1);
+	}
+	while ((i = str.Find(_T('\\'), i+1)) >= 0)
+	{
+		CString s = str.Left(i+1);
+		if (!IsDirExists(s) && !CreateDirectory(s, NULL))
+			return FALSE;
+	}
+
+	return TRUE;
 }

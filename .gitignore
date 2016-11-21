@@ -4,3 +4,4 @@ ipch/streamingmediatools-36a26e1c/streamingmediatools-d7b24c1.ipch
 StreamingMediaTools.sdf
 bin/StreamingMediaTools.pdb
 *.pdb
+*.opensdf
