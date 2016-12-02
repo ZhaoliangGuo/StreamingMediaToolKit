@@ -38,8 +38,7 @@
 //                 are multiple CReportCtrl objects on same window.
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-#include "stdafx.h"
+#include "..\\stdafx.h"
 #include "pxReportCtrl.h"
 #include <afxtempl.h>
 

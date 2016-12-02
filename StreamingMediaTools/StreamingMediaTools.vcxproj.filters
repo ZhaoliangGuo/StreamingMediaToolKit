@@ -25,6 +25,12 @@
     <Filter Include="CReportCtrl">
       <UniqueIdentifier>{2c06628c-675f-4975-abfd-cd63f67da713}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Faad">
+      <UniqueIdentifier>{8a963d4f-72ba-4df4-9657-2f4e2dbae24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AAC">
+      <UniqueIdentifier>{3de0f482-a083-4c96-85a2-d7359cac6d78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -66,6 +72,21 @@
     <ClInclude Include="CReportCtrl\pxReportCtrl.h">
       <Filter>CReportCtrl</Filter>
     </ClInclude>
+    <ClInclude Include="Faad\pxFaadBits.h">
+      <Filter>Faad</Filter>
+    </ClInclude>
+    <ClInclude Include="Faad\pxFaadCommonDef.h">
+      <Filter>Faad</Filter>
+    </ClInclude>
+    <ClInclude Include="Faad\pxFaadMP4.h">
+      <Filter>Faad</Filter>
+    </ClInclude>
+    <ClInclude Include="pxAnalyzeAudioSpecificConfigDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pxAACAnalyzeDlg.h">
+      <Filter>AAC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StreamingMediaTools.cpp">
@@ -91,6 +112,21 @@
     </ClCompile>
     <ClCompile Include="CReportCtrl\pxReportCtrl.cpp">
       <Filter>CReportCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="Faad\pxFaadBits.cpp">
+      <Filter>Faad</Filter>
+    </ClCompile>
+    <ClCompile Include="Faad\pxFaadCommonDef.cpp">
+      <Filter>Faad</Filter>
+    </ClCompile>
+    <ClCompile Include="Faad\pxFaadMP4.cpp">
+      <Filter>Faad</Filter>
+    </ClCompile>
+    <ClCompile Include="pxAnalyzeAudioSpecificConfigDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pxAACAnalyzeDlg.cpp">
+      <Filter>AAC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

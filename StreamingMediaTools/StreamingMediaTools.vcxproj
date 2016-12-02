@@ -51,7 +51,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -81,7 +81,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -119,6 +119,11 @@
   <ItemGroup>
     <ClInclude Include="CLogFile\pxLogFile.h" />
     <ClInclude Include="CReportCtrl\pxReportCtrl.h" />
+    <ClInclude Include="Faad\pxFaadBits.h" />
+    <ClInclude Include="Faad\pxFaadCommonDef.h" />
+    <ClInclude Include="Faad\pxFaadMP4.h" />
+    <ClInclude Include="pxAACAnalyzeDlg.h" />
+    <ClInclude Include="pxAnalyzeAudioSpecificConfigDlg.h" />
     <ClInclude Include="pxCommonDef.h" />
     <ClInclude Include="pxRTMPAnalyzerDlg.h" />
     <ClInclude Include="pxRTSPAnalyzerDlg.h" />
@@ -131,6 +136,11 @@
   <ItemGroup>
     <ClCompile Include="CLogFile\pxLogFile.cpp" />
     <ClCompile Include="CReportCtrl\pxReportCtrl.cpp" />
+    <ClCompile Include="Faad\pxFaadBits.cpp" />
+    <ClCompile Include="Faad\pxFaadCommonDef.cpp" />
+    <ClCompile Include="Faad\pxFaadMP4.cpp" />
+    <ClCompile Include="pxAACAnalyzeDlg.cpp" />
+    <ClCompile Include="pxAnalyzeAudioSpecificConfigDlg.cpp" />
     <ClCompile Include="pxCommonDef.cpp" />
     <ClCompile Include="pxRTMPAnalyzerDlg.cpp" />
     <ClCompile Include="pxRTSPAnalyzerDlg.cpp" />

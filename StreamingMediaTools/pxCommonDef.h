@@ -10,6 +10,10 @@ using namespace std;
 #include ".\\CLogFile\\pxLogFile.h"
 #include ".\\CReportCtrl\\pxReportCtrl.h"
 
+
+#include ".\\Faad\\pxFaadMP4.h"
+#include ".\\faad\\pxFAADCommonDef.h"
+
 extern CLogFile g_logFile;
 extern CString  g_strMsg;
 

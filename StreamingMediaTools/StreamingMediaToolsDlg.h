@@ -6,6 +6,7 @@
 #include "afxcmn.h"
 #include "pxRTMPAnalyzerDlg.h"
 #include "pxRTSPAnalyzerDlg.h"
+#include "pxAACAnalyzeDlg.h"
 #include "afxwin.h"
 
 // CStreamingMediaToolsDlg ¶Ô»°¿ò
@@ -36,6 +37,7 @@ protected:
 protected:
 	CPxRTMPAnalyzerDlg *m_pRTMPAnalyzerDlg;
 	CPxRTSPAnalyzerDlg *m_pRTSPAnalyzerDlg;
+	CPxAACAnalyzeDlg   *m_pAACAnalyzeDlg;
     
 public:
 	CTabCtrl m_TabCtrl;

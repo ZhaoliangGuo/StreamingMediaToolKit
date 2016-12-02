@@ -177,12 +177,21 @@ void CStreamingMediaToolsDlg::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	case 0:
 		m_pRTMPAnalyzerDlg->ShowWindow(SW_SHOW);
 		m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
+		m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
 
 		break;
 
 	case 1:
 		m_pRTMPAnalyzerDlg->ShowWindow(SW_HIDE);
 		m_pRTSPAnalyzerDlg->ShowWindow(SW_SHOW);
+		m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
+
+		break;
+
+	case 2:
+		m_pRTMPAnalyzerDlg->ShowWindow(SW_HIDE);
+		m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
+		m_pAACAnalyzeDlg->ShowWindow(SW_SHOW);
 
 		break;
 
@@ -200,6 +209,7 @@ void CStreamingMediaToolsDlg::Init()
 {
 	m_TabCtrl.InsertItem(0, _T("RTMP"));
 	m_TabCtrl.InsertItem(1, _T("RTSP"));
+	m_TabCtrl.InsertItem(2, _T("AAC"));
 
 	// 创建RTMP 分析界面
 	m_pRTMPAnalyzerDlg = new CPxRTMPAnalyzerDlg;
@@ -221,6 +231,15 @@ void CStreamingMediaToolsDlg::Init()
 		return ;
 	}
 
+	m_pAACAnalyzeDlg = new CPxAACAnalyzeDlg;
+	bret = m_pAACAnalyzeDlg->Create(IDD_OLE_PROPPAGE_LARGE_AAC, GetDlgItem(IDC_MAINTAB));
+	if (FALSE == bret)
+	{
+		AfxMessageBox(_T("创建AAC 分析对话框失败"));
+
+		return ;
+	}
+
 	CRect rtTabClient;
 	m_TabCtrl.GetClientRect(&rtTabClient);
 	rtTabClient.top += 30;
@@ -230,10 +249,12 @@ void CStreamingMediaToolsDlg::Init()
 
 	m_pRTMPAnalyzerDlg->MoveWindow(&rtTabClient,FALSE);
 	m_pRTSPAnalyzerDlg->MoveWindow(&rtTabClient,FALSE);
+	m_pAACAnalyzeDlg->MoveWindow(&rtTabClient,FALSE);
 
 	// 显示默认界面
 	m_pRTMPAnalyzerDlg->ShowWindow(SW_SHOW);
 	m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
+	m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
 
 	::InitializeCriticalSection(&m_csListBox);   //初始化临界区
 }
@@ -254,6 +275,13 @@ void CStreamingMediaToolsDlg::OnDestroy()
 		m_pRTMPAnalyzerDlg->DestroyWindow();
 		delete m_pRTMPAnalyzerDlg;
 		m_pRTMPAnalyzerDlg = NULL;
+	}
+
+	if (m_pAACAnalyzeDlg)
+	{
+		m_pAACAnalyzeDlg->DestroyWindow();
+		delete m_pAACAnalyzeDlg;
+		m_pAACAnalyzeDlg = NULL;
 	}
 
 	::DeleteCriticalSection(&m_csListBox);    //释放里临界区
