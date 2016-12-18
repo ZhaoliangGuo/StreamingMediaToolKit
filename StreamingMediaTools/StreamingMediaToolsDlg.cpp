@@ -74,6 +74,7 @@ BEGIN_MESSAGE_MAP(CStreamingMediaToolsDlg, CDialogEx)
 	ON_COMMAND(ID_RIGHT_MENU_OPEN_INSTALL_DIR, &CStreamingMediaToolsDlg::OnRightMenuOpenInstallDir)
 	ON_COMMAND(ID_RIGHT_MENU_EXIT, &CStreamingMediaToolsDlg::OnRightMenuExit)
 	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_RIGHT_MENU_OPEN_RECORD_DIR, &CStreamingMediaToolsDlg::OnRightMenuOpenRecordDir)
 END_MESSAGE_MAP()
 
 
@@ -179,6 +180,8 @@ void CStreamingMediaToolsDlg::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 		m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
 		m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
 
+		WritePrivateProfileString("DefaultPage", "Name",  "RTMP", g_strConfFile);
+
 		break;
 
 	case 1:
@@ -186,12 +189,16 @@ void CStreamingMediaToolsDlg::OnNMClickTab1(NMHDR *pNMHDR, LRESULT *pResult)
 		m_pRTSPAnalyzerDlg->ShowWindow(SW_SHOW);
 		m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
 
+		WritePrivateProfileString("DefaultPage", "Name",  "RTSP", g_strConfFile);
+
 		break;
 
 	case 2:
 		m_pRTMPAnalyzerDlg->ShowWindow(SW_HIDE);
 		m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
 		m_pAACAnalyzeDlg->ShowWindow(SW_SHOW);
+
+		WritePrivateProfileString("DefaultPage", "Name",  "AAC", g_strConfFile);
 
 		break;
 
@@ -252,9 +259,37 @@ void CStreamingMediaToolsDlg::Init()
 	m_pAACAnalyzeDlg->MoveWindow(&rtTabClient,FALSE);
 
 	// 显示默认界面
-	m_pRTMPAnalyzerDlg->ShowWindow(SW_SHOW);
-	m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
-	m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
+	char szDefaultPageName[_MAX_PATH] = {0};
+	GetPrivateProfileString("DefaultPage", 
+		"Name", 
+		"RTMP", 
+		szDefaultPageName, 
+		sizeof(szDefaultPageName), 
+		g_strConfFile);
+
+	if (0 == strcmp(szDefaultPageName, "RTMP"))
+	{
+		m_TabCtrl.SetCurSel(0);
+		m_pRTMPAnalyzerDlg->ShowWindow(SW_SHOW);
+		m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
+		m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
+	}
+	else if (0 == strcmp(szDefaultPageName, "RTSP"))
+	{
+		m_TabCtrl.SetCurSel(1);
+		m_pRTMPAnalyzerDlg->ShowWindow(SW_HIDE);
+		m_pRTSPAnalyzerDlg->ShowWindow(SW_SHOW);
+		m_pAACAnalyzeDlg->ShowWindow(SW_HIDE);
+	}
+	else if (0 == strcmp(szDefaultPageName, "AAC"))
+	{
+		m_TabCtrl.SetCurSel(2);
+		m_pRTMPAnalyzerDlg->ShowWindow(SW_HIDE);
+		m_pRTSPAnalyzerDlg->ShowWindow(SW_HIDE);
+		m_pAACAnalyzeDlg->ShowWindow(SW_SHOW);
+	}
+
+	m_listboxLogInfo.SetHorizontalExtent(5000);
 
 	::InitializeCriticalSection(&m_csListBox);   //初始化临界区
 }
@@ -382,8 +417,10 @@ void CStreamingMediaToolsDlg::OnRightMenuMinimize()
 void CStreamingMediaToolsDlg::OnRightMenuOpenLogDir()
 {
 	char szAppPath[MAX_PATH] = {0};
-	GetAppPath(szAppPath);
-	strcat(szAppPath, ".\\LogFile\\");
+	/*GetAppPath(szAppPath);
+	strcat(szAppPath, ".\\LogFile\\");*/
+
+	strcpy(szAppPath, ".\\LogFile\\");
 
 	ShellExecuteA(NULL, "open", szAppPath, NULL, NULL, SW_NORMAL);
 }
@@ -398,18 +435,26 @@ void CStreamingMediaToolsDlg::OnRightMenuOpenTodayLog()
 	SYSTEMTIME   time;
 	GetLocalTime(&time);
 
-	char strLogFilePath[_MAX_PATH]      = {0};
+	char szLogFilePath[_MAX_PATH]      = {0};
 
-	sprintf_s(strLogFilePath,
+	/*sprintf_s(strLogFilePath,
 		_MAX_PATH, 
 		".\\LogFile\\LogFile_%4d-%02d-%02d.txt", 
 		szAppPath,
 		time.wYear, 
 		time.wMonth , 
+		time.wDay);*/
+
+	sprintf_s(szLogFilePath,
+		_MAX_PATH, 
+		".\\LogFile\\LogFile_%4d-%02d-%02d.txt", 
+		time.wYear, 
+		time.wMonth , 
 		time.wDay);
 
 	CString strLogFileName;
-	strLogFileName.Format("%S", strLogFilePath);
+	//strLogFileName.Format("%S", szLogFilePath);
+	strLogFileName.Format("%s", szLogFilePath);
 
 	if (IsFileExist(strLogFileName))
 	{
@@ -454,4 +499,13 @@ void CStreamingMediaToolsDlg::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN|TPM_RIGHTBUTTON, point.x, point.y, this);
 	pPopup->Detach();
 	popMenu.DestroyMenu();
+}
+
+void CStreamingMediaToolsDlg::OnRightMenuOpenRecordDir()
+{
+	char szAppPath[MAX_PATH] = {0};
+	GetAppPath(szAppPath);
+	strcat(szAppPath, "\\RecordFile\\");
+
+	ShellExecuteA(NULL, "open", szAppPath, NULL, NULL, SW_NORMAL);
 }

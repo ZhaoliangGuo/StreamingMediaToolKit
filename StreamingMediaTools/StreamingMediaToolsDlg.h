@@ -57,4 +57,5 @@ public:
 	afx_msg void OnRightMenuOpenInstallDir();
 	afx_msg void OnRightMenuExit();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnRightMenuOpenRecordDir();
 };

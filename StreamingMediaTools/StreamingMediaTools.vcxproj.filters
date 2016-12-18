@@ -40,6 +40,9 @@
     <None Include="res\StreamingMediaTools.ico">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="playCommon.hh">
+      <Filter>RTSP</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StreamingMediaTools.h">
@@ -81,11 +84,17 @@
     <ClInclude Include="Faad\pxFaadMP4.h">
       <Filter>Faad</Filter>
     </ClInclude>
-    <ClInclude Include="pxAnalyzeAudioSpecificConfigDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="pxAACAnalyzeDlg.h">
       <Filter>AAC</Filter>
+    </ClInclude>
+    <ClInclude Include="pxAnalyzeAudioSpecificConfigDlg.h">
+      <Filter>AAC</Filter>
+    </ClInclude>
+    <ClInclude Include="pxH264VideoFileSink.h">
+      <Filter>RTSP</Filter>
+    </ClInclude>
+    <ClInclude Include="pxRTSPCommonDef.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,11 +131,20 @@
     <ClCompile Include="Faad\pxFaadMP4.cpp">
       <Filter>Faad</Filter>
     </ClCompile>
-    <ClCompile Include="pxAnalyzeAudioSpecificConfigDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="pxAACAnalyzeDlg.cpp">
       <Filter>AAC</Filter>
+    </ClCompile>
+    <ClCompile Include="playCommon.cpp">
+      <Filter>RTSP</Filter>
+    </ClCompile>
+    <ClCompile Include="openRTSP.cpp">
+      <Filter>RTSP</Filter>
+    </ClCompile>
+    <ClCompile Include="pxAnalyzeAudioSpecificConfigDlg.cpp">
+      <Filter>AAC</Filter>
+    </ClCompile>
+    <ClCompile Include="pxH264VideoFileSink.cpp">
+      <Filter>RTSP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,705 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug641|Win32">
+      <Configuration>Debug641</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug641|x64">
+      <Configuration>Debug641</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug64|Win32">
+      <Configuration>Debug64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug64|x64">
+      <Configuration>Debug64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|Win32">
+      <Configuration>Release64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|x64">
+      <Configuration>Release64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EF59271A-7ECE-4D5D-AA2B-CF6CFD7545BE}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>liveMedia</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>Debug\</OutDir>
+    <IntDir>Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|Win32'">
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|x64'">
+    <OutDir>Debug64\</OutDir>
+    <IntDir>Debug64\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>Release\</OutDir>
+    <IntDir>Release\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">
+    <OutDir>Release64\</OutDir>
+    <IntDir>Release64\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">
+    <OutDir>Debug64\</OutDir>
+    <IntDir>Debug64\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;DEBUG_TIMESTAMPS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>CustomBuild.bat Debug</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug641|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>CustomBuild.bat Debug64</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>CustomBuild.bat Release</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;DEBUG_TIMESTAMPS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN64;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>CustomBuild.bat Release64</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\groupsock\include;..\liveMedia\include;..\UsageEnvironment\include;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>CustomBuild.bat Debug64</Command>
+    </PostBuildEvent>
+    <Lib>
+      <TargetMachine>
+      </TargetMachine>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="COPYING" />
+    <None Include="EBMLNumber.hh" />
+    <None Include="H263plusVideoStreamParser.hh" />
+    <None Include="include\AC3AudioFileServerMediaSubsession.hh" />
+    <None Include="include\AC3AudioRTPSink.hh" />
+    <None Include="include\AC3AudioRTPSource.hh" />
+    <None Include="include\AC3AudioStreamFramer.hh" />
+    <None Include="include\ADTSAudioFileServerMediaSubsession.hh" />
+    <None Include="include\ADTSAudioFileSource.hh" />
+    <None Include="include\AMRAudioFileServerMediaSubsession.hh" />
+    <None Include="include\AMRAudioFileSink.hh" />
+    <None Include="include\AMRAudioFileSource.hh" />
+    <None Include="include\AMRAudioRTPSink.hh" />
+    <None Include="include\AMRAudioRTPSource.hh" />
+    <None Include="include\AMRAudioSource.hh" />
+    <None Include="include\AudioInputDevice.hh" />
+    <None Include="include\AudioRTPSink.hh" />
+    <None Include="include\AVIFileSink.hh" />
+    <None Include="include\Base64.hh" />
+    <None Include="include\BasicUDPSink.hh" />
+    <None Include="include\BasicUDPSource.hh" />
+    <None Include="include\BitVector.hh" />
+    <None Include="include\ByteStreamFileSource.hh" />
+    <None Include="include\ByteStreamMemoryBufferSource.hh" />
+    <None Include="include\ByteStreamMultiFileSource.hh" />
+    <None Include="include\DeviceSource.hh" />
+    <None Include="include\DigestAuthentication.hh" />
+    <None Include="include\DVVideoFileServerMediaSubsession.hh" />
+    <None Include="include\DVVideoRTPSink.hh" />
+    <None Include="include\DVVideoRTPSource.hh" />
+    <None Include="include\DVVideoStreamFramer.hh" />
+    <None Include="include\FileServerMediaSubsession.hh" />
+    <None Include="include\FileSink.hh" />
+    <None Include="include\FramedFileSource.hh" />
+    <None Include="include\FramedFilter.hh" />
+    <None Include="include\FramedSource.hh" />
+    <None Include="include\GenericMediaServer.hh" />
+    <None Include="include\GSMAudioRTPSink.hh" />
+    <None Include="include\H261VideoRTPSource.hh" />
+    <None Include="include\H263plusVideoFileServerMediaSubsession.hh" />
+    <None Include="include\H263plusVideoRTPSink.hh" />
+    <None Include="include\H263plusVideoRTPSource.hh" />
+    <None Include="include\H263plusVideoStreamFramer.hh" />
+    <None Include="include\H264or5VideoFileSink.hh" />
+    <None Include="include\H264or5VideoRTPSink.hh" />
+    <None Include="include\H264or5VideoStreamDiscreteFramer.hh" />
+    <None Include="include\H264or5VideoStreamFramer.hh" />
+    <None Include="include\H264VideoFileServerMediaSubsession.hh" />
+    <None Include="include\H264VideoFileSink.hh" />
+    <None Include="include\H264VideoRTPSink.hh" />
+    <None Include="include\H264VideoRTPSource.hh" />
+    <None Include="include\H264VideoStreamDiscreteFramer.hh" />
+    <None Include="include\H264VideoStreamFramer.hh" />
+    <None Include="include\H265VideoFileServerMediaSubsession.hh" />
+    <None Include="include\H265VideoFileSink.hh" />
+    <None Include="include\H265VideoRTPSink.hh" />
+    <None Include="include\H265VideoRTPSource.hh" />
+    <None Include="include\H265VideoStreamDiscreteFramer.hh" />
+    <None Include="include\H265VideoStreamFramer.hh" />
+    <None Include="include\InputFile.hh" />
+    <None Include="include\JPEGVideoRTPSink.hh" />
+    <None Include="include\JPEGVideoRTPSource.hh" />
+    <None Include="include\JPEGVideoSource.hh" />
+    <None Include="include\liveMedia.hh" />
+    <None Include="include\liveMedia_version.hh" />
+    <None Include="include\Locale.hh" />
+    <None Include="include\MatroskaFile.hh" />
+    <None Include="include\MatroskaFileServerDemux.hh" />
+    <None Include="include\Media.hh" />
+    <None Include="include\MediaSession.hh" />
+    <None Include="include\MediaSink.hh" />
+    <None Include="include\MediaSource.hh" />
+    <None Include="include\MediaTranscodingTable.hh" />
+    <None Include="include\MP3ADU.hh" />
+    <None Include="include\MP3ADUinterleaving.hh" />
+    <None Include="include\MP3ADURTPSink.hh" />
+    <None Include="include\MP3ADURTPSource.hh" />
+    <None Include="include\MP3ADUTranscoder.hh" />
+    <None Include="include\MP3AudioFileServerMediaSubsession.hh" />
+    <None Include="include\MP3FileSource.hh" />
+    <None Include="include\MP3Transcoder.hh" />
+    <None Include="include\MPEG1or2AudioRTPSink.hh" />
+    <None Include="include\MPEG1or2AudioRTPSource.hh" />
+    <None Include="include\MPEG1or2AudioStreamFramer.hh" />
+    <None Include="include\MPEG1or2Demux.hh" />
+    <None Include="include\MPEG1or2DemuxedElementaryStream.hh" />
+    <None Include="include\MPEG1or2DemuxedServerMediaSubsession.hh" />
+    <None Include="include\MPEG1or2FileServerDemux.hh" />
+    <None Include="include\MPEG1or2VideoFileServerMediaSubsession.hh" />
+    <None Include="include\MPEG1or2VideoRTPSink.hh" />
+    <None Include="include\MPEG1or2VideoRTPSource.hh" />
+    <None Include="include\MPEG1or2VideoStreamDiscreteFramer.hh" />
+    <None Include="include\MPEG1or2VideoStreamFramer.hh" />
+    <None Include="include\MPEG2IndexFromTransportStream.hh" />
+    <None Include="include\MPEG2TransportFileServerMediaSubsession.hh" />
+    <None Include="include\MPEG2TransportStreamFramer.hh" />
+    <None Include="include\MPEG2TransportStreamFromESSource.hh" />
+    <None Include="include\MPEG2TransportStreamFromPESSource.hh" />
+    <None Include="include\MPEG2TransportStreamIndexFile.hh" />
+    <None Include="include\MPEG2TransportStreamMultiplexor.hh" />
+    <None Include="include\MPEG2TransportStreamTrickModeFilter.hh" />
+    <None Include="include\MPEG2TransportUDPServerMediaSubsession.hh" />
+    <None Include="include\MPEG4ESVideoRTPSink.hh" />
+    <None Include="include\MPEG4ESVideoRTPSource.hh" />
+    <None Include="include\MPEG4GenericRTPSink.hh" />
+    <None Include="include\MPEG4GenericRTPSource.hh" />
+    <None Include="include\MPEG4LATMAudioRTPSink.hh" />
+    <None Include="include\MPEG4LATMAudioRTPSource.hh" />
+    <None Include="include\MPEG4VideoFileServerMediaSubsession.hh" />
+    <None Include="include\MPEG4VideoStreamDiscreteFramer.hh" />
+    <None Include="include\MPEG4VideoStreamFramer.hh" />
+    <None Include="include\MPEGVideoStreamFramer.hh" />
+    <None Include="include\MultiFramedRTPSink.hh" />
+    <None Include="include\MultiFramedRTPSource.hh" />
+    <None Include="include\OggFile.hh" />
+    <None Include="include\OggFileServerDemux.hh" />
+    <None Include="include\OggFileSink.hh" />
+    <None Include="include\OnDemandServerMediaSubsession.hh" />
+    <None Include="include\ourMD5.hh" />
+    <None Include="include\OutputFile.hh" />
+    <None Include="include\PassiveServerMediaSubsession.hh" />
+    <None Include="include\ProxyServerMediaSession.hh" />
+    <None Include="include\QCELPAudioRTPSource.hh" />
+    <None Include="include\QuickTimeFileSink.hh" />
+    <None Include="include\QuickTimeGenericRTPSource.hh" />
+    <None Include="include\RTCP.hh" />
+    <None Include="include\RTPInterface.hh" />
+    <None Include="include\RTPSink.hh" />
+    <None Include="include\RTPSource.hh" />
+    <None Include="include\RTSPClient.hh" />
+    <None Include="include\RTSPCommon.hh" />
+    <None Include="include\RTSPRegisterSender.hh" />
+    <None Include="include\RTSPServer.hh" />
+    <None Include="include\RTSPServerSupportingHTTPStreaming.hh" />
+    <None Include="include\ServerMediaSession.hh" />
+    <None Include="include\SimpleRTPSink.hh" />
+    <None Include="include\SimpleRTPSource.hh" />
+    <None Include="include\SIPClient.hh" />
+    <None Include="include\StreamReplicator.hh" />
+    <None Include="include\T140TextRTPSink.hh" />
+    <None Include="include\TCPStreamSink.hh" />
+    <None Include="include\TextRTPSink.hh" />
+    <None Include="include\TheoraVideoRTPSink.hh" />
+    <None Include="include\TheoraVideoRTPSource.hh" />
+    <None Include="include\uLawAudioFilter.hh" />
+    <None Include="include\VideoRTPSink.hh" />
+    <None Include="include\VorbisAudioRTPSink.hh" />
+    <None Include="include\VorbisAudioRTPSource.hh" />
+    <None Include="include\VP8VideoRTPSink.hh" />
+    <None Include="include\VP8VideoRTPSource.hh" />
+    <None Include="include\VP9VideoRTPSink.hh" />
+    <None Include="include\VP9VideoRTPSource.hh" />
+    <None Include="include\WAVAudioFileServerMediaSubsession.hh" />
+    <None Include="include\WAVAudioFileSource.hh" />
+    <None Include="Makefile.head" />
+    <None Include="Makefile.tail" />
+    <None Include="MatroskaDemuxedTrack.hh" />
+    <None Include="MatroskaFileParser.hh" />
+    <None Include="MatroskaFileServerMediaSubsession.hh" />
+    <None Include="MP3ADUdescriptor.hh" />
+    <None Include="MP3AudioMatroskaFileServerMediaSubsession.hh" />
+    <None Include="MP3Internals.hh" />
+    <None Include="MP3InternalsHuffman.hh" />
+    <None Include="MP3StreamState.hh" />
+    <None Include="MPEGVideoStreamParser.hh" />
+    <None Include="OggDemuxedTrack.hh" />
+    <None Include="OggFileParser.hh" />
+    <None Include="OggFileServerMediaSubsession.hh" />
+    <None Include="ReadMe.txt" />
+    <None Include="StreamParser.hh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AC3AudioFileServerMediaSubsession.cpp" />
+    <ClCompile Include="AC3AudioRTPSink.cpp" />
+    <ClCompile Include="AC3AudioRTPSource.cpp" />
+    <ClCompile Include="AC3AudioStreamFramer.cpp" />
+    <ClCompile Include="ADTSAudioFileServerMediaSubsession.cpp" />
+    <ClCompile Include="ADTSAudioFileSource.cpp" />
+    <ClCompile Include="AMRAudioFileServerMediaSubsession.cpp" />
+    <ClCompile Include="AMRAudioFileSink.cpp" />
+    <ClCompile Include="AMRAudioFileSource.cpp" />
+    <ClCompile Include="AMRAudioRTPSink.cpp" />
+    <ClCompile Include="AMRAudioRTPSource.cpp" />
+    <ClCompile Include="AMRAudioSource.cpp" />
+    <ClCompile Include="AudioInputDevice.cpp" />
+    <ClCompile Include="AudioRTPSink.cpp" />
+    <ClCompile Include="AVIFileSink.cpp" />
+    <ClCompile Include="Base64.cpp" />
+    <ClCompile Include="BasicUDPSink.cpp" />
+    <ClCompile Include="BasicUDPSource.cpp" />
+    <ClCompile Include="BitVector.cpp" />
+    <ClCompile Include="ByteStreamFileSource.cpp" />
+    <ClCompile Include="ByteStreamMemoryBufferSource.cpp" />
+    <ClCompile Include="ByteStreamMultiFileSource.cpp" />
+    <ClCompile Include="DeviceSource.cpp" />
+    <ClCompile Include="DigestAuthentication.cpp" />
+    <ClCompile Include="DVVideoFileServerMediaSubsession.cpp" />
+    <ClCompile Include="DVVideoRTPSink.cpp" />
+    <ClCompile Include="DVVideoRTPSource.cpp" />
+    <ClCompile Include="DVVideoStreamFramer.cpp" />
+    <ClCompile Include="EBMLNumber.cpp" />
+    <ClCompile Include="FileServerMediaSubsession.cpp" />
+    <ClCompile Include="FileSink.cpp" />
+    <ClCompile Include="FramedFileSource.cpp" />
+    <ClCompile Include="FramedFilter.cpp" />
+    <ClCompile Include="FramedSource.cpp" />
+    <ClCompile Include="GenericMediaServer.cpp" />
+    <ClCompile Include="GSMAudioRTPSink.cpp" />
+    <ClCompile Include="H261VideoRTPSource.cpp" />
+    <ClCompile Include="H263plusVideoFileServerMediaSubsession.cpp" />
+    <ClCompile Include="H263plusVideoRTPSink.cpp" />
+    <ClCompile Include="H263plusVideoRTPSource.cpp" />
+    <ClCompile Include="H263plusVideoStreamFramer.cpp" />
+    <ClCompile Include="H263plusVideoStreamParser.cpp" />
+    <ClCompile Include="H264or5VideoFileSink.cpp" />
+    <ClCompile Include="H264or5VideoRTPSink.cpp" />
+    <ClCompile Include="H264or5VideoStreamDiscreteFramer.cpp" />
+    <ClCompile Include="H264or5VideoStreamFramer.cpp" />
+    <ClCompile Include="H264VideoFileServerMediaSubsession.cpp" />
+    <ClCompile Include="H264VideoFileSink.cpp" />
+    <ClCompile Include="H264VideoRTPSink.cpp" />
+    <ClCompile Include="H264VideoRTPSource.cpp" />
+    <ClCompile Include="H264VideoStreamDiscreteFramer.cpp" />
+    <ClCompile Include="H264VideoStreamFramer.cpp" />
+    <ClCompile Include="H265VideoFileServerMediaSubsession.cpp" />
+    <ClCompile Include="H265VideoFileSink.cpp" />
+    <ClCompile Include="H265VideoRTPSink.cpp" />
+    <ClCompile Include="H265VideoRTPSource.cpp" />
+    <ClCompile Include="H265VideoStreamDiscreteFramer.cpp" />
+    <ClCompile Include="H265VideoStreamFramer.cpp" />
+    <ClCompile Include="InputFile.cpp" />
+    <ClCompile Include="JPEGVideoRTPSink.cpp" />
+    <ClCompile Include="JPEGVideoRTPSource.cpp" />
+    <ClCompile Include="JPEGVideoSource.cpp" />
+    <ClCompile Include="Locale.cpp" />
+    <ClCompile Include="MatroskaDemuxedTrack.cpp" />
+    <ClCompile Include="MatroskaFile.cpp" />
+    <ClCompile Include="MatroskaFileParser.cpp" />
+    <ClCompile Include="MatroskaFileServerDemux.cpp" />
+    <ClCompile Include="MatroskaFileServerMediaSubsession.cpp" />
+    <ClCompile Include="Media.cpp" />
+    <ClCompile Include="MediaSession.cpp" />
+    <ClCompile Include="MediaSink.cpp" />
+    <ClCompile Include="MediaSource.cpp" />
+    <ClCompile Include="MP3ADU.cpp" />
+    <ClCompile Include="MP3ADUdescriptor.cpp" />
+    <ClCompile Include="MP3ADUinterleaving.cpp" />
+    <ClCompile Include="MP3ADURTPSink.cpp" />
+    <ClCompile Include="MP3ADURTPSource.cpp" />
+    <ClCompile Include="MP3ADUTranscoder.cpp" />
+    <ClCompile Include="MP3AudioFileServerMediaSubsession.cpp" />
+    <ClCompile Include="MP3AudioMatroskaFileServerMediaSubsession.cpp" />
+    <ClCompile Include="MP3FileSource.cpp" />
+    <ClCompile Include="MP3Internals.cpp" />
+    <ClCompile Include="MP3InternalsHuffman.cpp" />
+    <ClCompile Include="MP3InternalsHuffmanTable.cpp" />
+    <ClCompile Include="MP3StreamState.cpp" />
+    <ClCompile Include="MP3Transcoder.cpp" />
+    <ClCompile Include="MPEG1or2AudioRTPSink.cpp" />
+    <ClCompile Include="MPEG1or2AudioRTPSource.cpp" />
+    <ClCompile Include="MPEG1or2AudioStreamFramer.cpp" />
+    <ClCompile Include="MPEG1or2Demux.cpp" />
+    <ClCompile Include="MPEG1or2DemuxedElementaryStream.cpp" />
+    <ClCompile Include="MPEG1or2DemuxedServerMediaSubsession.cpp" />
+    <ClCompile Include="MPEG1or2FileServerDemux.cpp" />
+    <ClCompile Include="MPEG1or2VideoFileServerMediaSubsession.cpp" />
+    <ClCompile Include="MPEG1or2VideoRTPSink.cpp" />
+    <ClCompile Include="MPEG1or2VideoRTPSource.cpp" />
+    <ClCompile Include="MPEG1or2VideoStreamDiscreteFramer.cpp" />
+    <ClCompile Include="MPEG1or2VideoStreamFramer.cpp" />
+    <ClCompile Include="MPEG2IndexFromTransportStream.cpp" />
+    <ClCompile Include="MPEG2TransportFileServerMediaSubsession.cpp" />
+    <ClCompile Include="MPEG2TransportStreamFramer.cpp" />
+    <ClCompile Include="MPEG2TransportStreamFromESSource.cpp" />
+    <ClCompile Include="MPEG2TransportStreamFromPESSource.cpp" />
+    <ClCompile Include="MPEG2TransportStreamIndexFile.cpp" />
+    <ClCompile Include="MPEG2TransportStreamMultiplexor.cpp" />
+    <ClCompile Include="MPEG2TransportStreamTrickModeFilter.cpp" />
+    <ClCompile Include="MPEG2TransportUDPServerMediaSubsession.cpp" />
+    <ClCompile Include="MPEG4ESVideoRTPSink.cpp" />
+    <ClCompile Include="MPEG4ESVideoRTPSource.cpp" />
+    <ClCompile Include="MPEG4GenericRTPSink.cpp" />
+    <ClCompile Include="MPEG4GenericRTPSource.cpp" />
+    <ClCompile Include="MPEG4LATMAudioRTPSink.cpp" />
+    <ClCompile Include="MPEG4LATMAudioRTPSource.cpp" />
+    <ClCompile Include="MPEG4VideoFileServerMediaSubsession.cpp" />
+    <ClCompile Include="MPEG4VideoStreamDiscreteFramer.cpp" />
+    <ClCompile Include="MPEG4VideoStreamFramer.cpp" />
+    <ClCompile Include="MPEGVideoStreamFramer.cpp" />
+    <ClCompile Include="MPEGVideoStreamParser.cpp" />
+    <ClCompile Include="MultiFramedRTPSink.cpp" />
+    <ClCompile Include="MultiFramedRTPSource.cpp" />
+    <ClCompile Include="OggDemuxedTrack.cpp" />
+    <ClCompile Include="OggFile.cpp" />
+    <ClCompile Include="OggFileParser.cpp" />
+    <ClCompile Include="OggFileServerDemux.cpp" />
+    <ClCompile Include="OggFileServerMediaSubsession.cpp" />
+    <ClCompile Include="OggFileSink.cpp" />
+    <ClCompile Include="OnDemandServerMediaSubsession.cpp" />
+    <ClCompile Include="ourMD5.cpp" />
+    <ClCompile Include="OutputFile.cpp" />
+    <ClCompile Include="PassiveServerMediaSubsession.cpp" />
+    <ClCompile Include="ProxyServerMediaSession.cpp" />
+    <ClCompile Include="QCELPAudioRTPSource.cpp" />
+    <ClCompile Include="QuickTimeFileSink.cpp" />
+    <ClCompile Include="QuickTimeGenericRTPSource.cpp" />
+    <ClCompile Include="RTCP.cpp" />
+    <ClCompile Include="rtcp_from_spec.c" />
+    <ClCompile Include="RTPInterface.cpp" />
+    <ClCompile Include="RTPSink.cpp" />
+    <ClCompile Include="RTPSource.cpp" />
+    <ClCompile Include="RTSPClient.cpp" />
+    <ClCompile Include="RTSPCommon.cpp" />
+    <ClCompile Include="RTSPRegisterSender.cpp" />
+    <ClCompile Include="RTSPServer.cpp" />
+    <ClCompile Include="RTSPServerSupportingHTTPStreaming.cpp" />
+    <ClCompile Include="ServerMediaSession.cpp" />
+    <ClCompile Include="SimpleRTPSink.cpp" />
+    <ClCompile Include="SimpleRTPSource.cpp" />
+    <ClCompile Include="SIPClient.cpp" />
+    <ClCompile Include="StreamParser.cpp" />
+    <ClCompile Include="StreamReplicator.cpp" />
+    <ClCompile Include="T140TextRTPSink.cpp" />
+    <ClCompile Include="TCPStreamSink.cpp" />
+    <ClCompile Include="TextRTPSink.cpp" />
+    <ClCompile Include="TheoraVideoRTPSink.cpp" />
+    <ClCompile Include="TheoraVideoRTPSource.cpp" />
+    <ClCompile Include="uLawAudioFilter.cpp" />
+    <ClCompile Include="VideoRTPSink.cpp" />
+    <ClCompile Include="VorbisAudioRTPSink.cpp" />
+    <ClCompile Include="VorbisAudioRTPSource.cpp" />
+    <ClCompile Include="VP8VideoRTPSink.cpp" />
+    <ClCompile Include="VP8VideoRTPSource.cpp" />
+    <ClCompile Include="VP9VideoRTPSink.cpp" />
+    <ClCompile Include="VP9VideoRTPSource.cpp" />
+    <ClCompile Include="WAVAudioFileServerMediaSubsession.cpp" />
+    <ClCompile Include="WAVAudioFileSource.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="rtcp_from_spec.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

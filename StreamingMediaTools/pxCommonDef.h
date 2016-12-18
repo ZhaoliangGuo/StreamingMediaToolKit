@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _PX_COMMOND_DEF_H
+#define _PX_COMMOND_DEF_H
+
 #include <map>
 #include <vector>
 using namespace std;
@@ -10,9 +12,15 @@ using namespace std;
 #include ".\\CLogFile\\pxLogFile.h"
 #include ".\\CReportCtrl\\pxReportCtrl.h"
 
-
+// AAC 
 #include ".\\Faad\\pxFaadMP4.h"
 #include ".\\faad\\pxFAADCommonDef.h"
+
+// RTSP
+#include "liveMedia.hh"
+#include "Groupsock.hh"
+#include "UsageEnvironment.hh"
+#include "BasicUsageEnvironment.hh"
 
 extern CLogFile g_logFile;
 extern CString  g_strMsg;
@@ -48,3 +56,6 @@ extern void GetAppPath(char *out_pszAppPath);
 
 extern BOOL pxIsDirExists(LPCTSTR pszPath);
 extern BOOL pxCreateDir(LPCTSTR pszPath);
+
+#endif
+

@@ -61,4 +61,7 @@ public:
 	afx_msg void OnBnClickedCheckGenerate264File();
 
 	bool m_bGenerateH264File; // 分析时是否同时生成.264文件
+
+	int m_nVideoCntFromLastIFrame;
+	int m_nAudioCntFromLastIFrame;
 };
