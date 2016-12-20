@@ -96,6 +96,12 @@
     <ClInclude Include="pxRTSPCommonDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="pxAACBase.h">
+      <Filter>RTSP</Filter>
+    </ClInclude>
+    <ClInclude Include="pxAACFileSink.h">
+      <Filter>RTSP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StreamingMediaTools.cpp">
@@ -144,6 +150,12 @@
       <Filter>AAC</Filter>
     </ClCompile>
     <ClCompile Include="pxH264VideoFileSink.cpp">
+      <Filter>RTSP</Filter>
+    </ClCompile>
+    <ClCompile Include="pxAACBase.cpp">
+      <Filter>RTSP</Filter>
+    </ClCompile>
+    <ClCompile Include="pxAACFileSink.cpp">
       <Filter>RTSP</Filter>
     </ClCompile>
   </ItemGroup>

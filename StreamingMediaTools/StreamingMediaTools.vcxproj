@@ -126,6 +126,8 @@
     <ClInclude Include="Faad\pxFaadCommonDef.h" />
     <ClInclude Include="Faad\pxFaadMP4.h" />
     <ClInclude Include="pxAACAnalyzeDlg.h" />
+    <ClInclude Include="pxAACBase.h" />
+    <ClInclude Include="pxAACFileSink.h" />
     <ClInclude Include="pxAnalyzeAudioSpecificConfigDlg.h" />
     <ClInclude Include="pxCommonDef.h" />
     <ClInclude Include="pxH264VideoFileSink.h" />
@@ -145,6 +147,8 @@
     <ClCompile Include="Faad\pxFaadCommonDef.cpp" />
     <ClCompile Include="Faad\pxFaadMP4.cpp" />
     <ClCompile Include="pxAACAnalyzeDlg.cpp" />
+    <ClCompile Include="pxAACBase.cpp" />
+    <ClCompile Include="pxAACFileSink.cpp" />
     <ClCompile Include="pxAnalyzeAudioSpecificConfigDlg.cpp" />
     <ClCompile Include="pxCommonDef.cpp" />
     <ClCompile Include="openRTSP.cpp" />

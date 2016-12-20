@@ -23,6 +23,8 @@ CPxRTSPAnalyzerDlg::CPxRTSPAnalyzerDlg(CWnd* pParent /*=NULL*/)
 	, m_strAVNotSyncThreshold(_T(""))
 {
 	m_bStop = false;
+	m_bShowAudio = true; 
+	m_bShowVideo = true;
 
 	::InitializeCriticalSection(&m_csListCtrl);   //初始化临界区
 }
@@ -30,6 +32,8 @@ CPxRTSPAnalyzerDlg::CPxRTSPAnalyzerDlg(CWnd* pParent /*=NULL*/)
 CPxRTSPAnalyzerDlg::~CPxRTSPAnalyzerDlg()
 {
 	m_bStop = false;
+	m_bShowAudio = true; 
+	m_bShowVideo = true;
 
 	::DeleteCriticalSection(&m_csListCtrl);    //释放里临界区
 }
@@ -117,11 +121,42 @@ void CPxRTSPAnalyzerDlg::ActivateItem()
 
 void CPxRTSPAnalyzerDlg::OnBnClickedCheckShowVideoInfo()
 {
+	UpdateData();
+
+	if (((CButton *)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->GetCheck() == BST_CHECKED)
+	{
+		m_bShowVideo = true; 
+		g_strMsg.Format("Show Video analyze info. RTSP");
+	}
+	else
+	{
+		m_bShowVideo = false; 
+		g_strMsg.Format("Do not Show Video analyze info. RTSP");
+	}
+
+	::PostMessage(g_hAppWnd, WM_ADD_LOG_TO_LIST, NULL, (LPARAM)g_strMsg.GetBuffer());
+
+	UpdateData(FALSE);
 }
 
 void CPxRTSPAnalyzerDlg::OnBnClickedCheckShowAudioInfo()
 {
-	
+	UpdateData();
+
+	if (((CButton *)GetDlgItem(IDC_CHECK_RTSP_SHOW_AUDIO_INFO))->GetCheck() == BST_CHECKED)
+	{
+		m_bShowAudio = true; 
+		g_strMsg.Format("Show Audio analyze info. RTSP");
+	}
+	else
+	{
+		m_bShowAudio = false; 
+		g_strMsg.Format("Do not Show Audio analyze info. RTSP");
+	}
+
+	::PostMessage(g_hAppWnd, WM_ADD_LOG_TO_LIST, NULL, (LPARAM)g_strMsg.GetBuffer());
+
+	UpdateData(FALSE);
 }
 
 void CPxRTSPAnalyzerDlg::OnBnClickedCheckGenerate264File()
@@ -211,6 +246,26 @@ LRESULT CPxRTSPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 
 	RTSPPacket *psRTSPPackage = (RTSPPacket *)lParam;
 
+	if (kePxMediaType_Video == psRTSPPackage->eMediaType)
+	{
+		if (!m_bShowVideo)
+		{
+			::LeaveCriticalSection(&m_csListCtrl);
+
+			return 0;
+		}	
+	}
+
+	if (kePxMediaType_Audio == psRTSPPackage->eMediaType)
+	{
+		if (!m_bShowAudio)
+		{
+			::LeaveCriticalSection(&m_csListCtrl);
+
+			return 0;
+		}
+	}
+
 	// test begin 
 	{
 		/*g_strMsg.Format("AddPackage2ListCtrl nTimeStamp :%I64d, m_nLastVideoTimestamp:%I64d, psRTSPPackage->nTimeStamp - m_nLastVideoTimestamp:%I64d", 
@@ -240,7 +295,16 @@ LRESULT CPxRTSPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 	}
 	else if (kePxMediaType_Audio == psRTSPPackage->eMediaType)
 	{
-		strDelta2LastVideoOrAudioTs = "####";
+		//strDelta2LastVideoOrAudioTs = "####";
+		if (0 == m_nLastAudioTimestamp)
+		{
+			strDelta2LastVideoOrAudioTs = "0";
+		}
+		else
+		{
+			nDelta2LastVideoOrAudioTs = psRTSPPackage->nTimeStamp - m_nLastAudioTimestamp;
+			strDelta2LastVideoOrAudioTs.Format("%I64d", nDelta2LastVideoOrAudioTs);
+		}
 	}
 
 	int nCnt     = m_lcPackage.GetItemCount();
@@ -278,6 +342,8 @@ LRESULT CPxRTSPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 			m_lcPackage.SetItemTextColor(maxIndex, 7, RGB(255, 255, 255));		
 			m_lcPackage.SetItemBkColor(maxIndex,   7, RGB(0x48, 0x76, 0xFF));
 		}	*/
+
+		m_nLastAudioTimestamp = psRTSPPackage->nTimeStamp;
 	}
 	else if (kePxMediaType_Video == psRTSPPackage->eMediaType)
 	{

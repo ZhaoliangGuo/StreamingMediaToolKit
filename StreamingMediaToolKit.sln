@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StreamingMediaTools", "StreamingMediaTools\StreamingMediaTools.vcxproj", "{6D1223C2-A1B2-4255-A0FC-9EAC3C86BD42}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StreamingMediaToolKit", "StreamingMediaTools\StreamingMediaTools.vcxproj", "{6D1223C2-A1B2-4255-A0FC-9EAC3C86BD42}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "librtmp", "librtmp\librtmp.vcxproj", "{FC356861-23F4-4886-BBF8-2968707BE593}"
 EndProject

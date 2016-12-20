@@ -47,6 +47,7 @@ SPxRTSPArg sCurrentRTSPArg;
 // add by ZL Guo End
 
 #include "pxH264VideoFileSink.h"
+#include "pxAACFileSink.h"
 
 char const* progName = "openRTSP";
 UsageEnvironment* env;
@@ -1488,7 +1489,8 @@ void createOutputFiles(char const* periodicFilenameSuffix)
 						subsession->fmtp_spropvps(),
 						subsession->fmtp_spropsps(),
 						subsession->fmtp_sproppps(),
-						fileSinkBufferSize, oneFilePerFrame);
+						fileSinkBufferSize, 
+						oneFilePerFrame);
 				} 
 				else if (strcmp(subsession->codecName(), "THEORA") == 0) 
 				{
@@ -1501,14 +1503,30 @@ void createOutputFiles(char const* periodicFilenameSuffix)
 					strcmp(subsession->codecName(), "AMR-WB") == 0) 
 				{
 					// For AMR audio streams, we use a special sink that inserts AMR frame hdrs:
-					fileSink = AMRAudioFileSink::createNew(*env, outFileName,
-						fileSinkBufferSize, oneFilePerFrame);
+					fileSink = AMRAudioFileSink::createNew(*env, outFileName, fileSinkBufferSize, oneFilePerFrame);
 				} 
-				else if (strcmp(subsession->codecName(), "VORBIS") == 0 ||
-					strcmp(subsession->codecName(), "OPUS") == 0) 
+				else if (strcmp(subsession->codecName(), "VORBIS") == 0 || strcmp(subsession->codecName(), "OPUS") == 0) 
 				{
 					createOggFileSink = True;
 				}
+				else if (strcmp(subsession->codecName(), "MPEG4-GENERIC") == 0) 
+				{
+					/*fReadSource = fRTPSource
+						= MPEG4GenericRTPSource::createNew(env(), 
+						fRTPSocket,
+						fRTPPayloadFormat,
+						fRTPTimestampFrequency,
+						fMediumName, attrVal_strToLower("mode"),
+						attrVal_unsigned("sizelength"),
+						attrVal_unsigned("indexlength"),
+						attrVal_unsigned("indexdeltalength"));*/
+
+					fileSink = CPxAACFileSink::createNew(*env, 
+						                                 outFileName,
+														 fileSinkBufferSize, 
+														 oneFilePerFrame,
+														 (char*)subsession->savedSDPLines());
+				} 
 			}
 
 			if (createOggFileSink) 
