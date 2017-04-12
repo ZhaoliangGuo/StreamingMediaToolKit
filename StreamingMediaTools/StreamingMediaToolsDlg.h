@@ -9,6 +9,8 @@
 #include "pxAACAnalyzeDlg.h"
 #include "afxwin.h"
 
+#define MESSAGE_BUFFER_SIZE (64*1024)
+
 // CStreamingMediaToolsDlg ¶Ô»°¿ò
 class CStreamingMediaToolsDlg : public CDialogEx
 {
@@ -58,4 +60,7 @@ public:
 	afx_msg void OnRightMenuExit();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnRightMenuOpenRecordDir();
+
+private:
+	char m_szMsgBuffer[MESSAGE_BUFFER_SIZE];
 };

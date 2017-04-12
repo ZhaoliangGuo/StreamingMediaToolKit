@@ -11,6 +11,8 @@
 #include <time.h>
 #include "pxCommonDef.h"
 
+#define LIST_ITEM_COUNT (9)
+
 /*
 References:
 http://blog.chinaunix.net/uid-15063109-id-4273162.html
@@ -49,8 +51,8 @@ CPxRTMPAnalyzerDlg::CPxRTMPAnalyzerDlg(CWnd* pParent /*=NULL*/)
 	m_strRTMP_URL        = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
 	m_strAVNotSyncThreshold = "300";
 	InitSockets();
-	m_nLastVideoTimestamp = -1;
-	m_nLastAudioTimestamp = -1;
+	m_nLastVideoTimestamp = 0;
+	m_nLastAudioTimestamp = 0;
 	::InitializeCriticalSection(&m_csListCtrl);   //初始化临界区
 	m_eTaskMode = kePxTaskMode_Invalid;
 
@@ -60,13 +62,16 @@ CPxRTMPAnalyzerDlg::CPxRTMPAnalyzerDlg(CWnd* pParent /*=NULL*/)
 
 	m_nVideoCntFromLastIFrame = 0;
 	m_nAudioCntFromLastIFrame = 0;
+
+	m_nBaseAudioTimestamp = 0;
+	m_nBaseVideoTimestamp = 0;
 }
 
 CPxRTMPAnalyzerDlg::~CPxRTMPAnalyzerDlg()
 {
 	CleanupSockets();
-	m_nLastVideoTimestamp = -1;
-	m_nLastAudioTimestamp = -1;
+	m_nLastVideoTimestamp = 0;
+	m_nLastAudioTimestamp = 0;
 	::DeleteCriticalSection(&m_csListCtrl);    //释放里临界区
 	m_eTaskMode = kePxTaskMode_Invalid;
 
@@ -122,6 +127,9 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStartRecord()
 	m_lcPackage.DeleteAllItems();
 
 	m_eTaskMode = kePxTaskMode_Record;
+
+	m_bInitBaseVideoTimestamp = false;
+	m_bInitBaseAudioTimestamp = false;
 
 	AfxBeginThread((AFX_THREADPROC)ThreadStartRecordOrAnalyze,
 		this,
@@ -677,6 +685,9 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStopRecord()
 	GetDlgItem(IDC_BUTTON_STOP_ANALZYE)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_SAVE_ANALZYE_INFO_2_FILE)->EnableWindow(TRUE);
 	GetDlgItem(IDC_CHECK_GENERATE_264_FILE)->EnableWindow(TRUE);
+
+	m_bInitBaseVideoTimestamp = false;
+	m_bInitBaseAudioTimestamp = false;
 }
 
 BOOL CPxRTMPAnalyzerDlg::OnInitDialog()
@@ -722,14 +733,15 @@ void CPxRTMPAnalyzerDlg::Init()
 	m_lcAgentClient.SetTextBkColor(RGB(96,96,96));
 	m_lcAgentClient.SetTextColor(RGB(255,255,255));*/ // 显示字体的颜色
 
-	m_lcPackage.InsertColumn(0,_T("序号"),LVCFMT_RIGHT,80,-1);
-	m_lcPackage.InsertColumn(1,_T("头类型/长度"),LVCFMT_LEFT,100,-1);
-	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,100,-1);
+	m_lcPackage.InsertColumn(0,_T("序号"),LVCFMT_RIGHT,40,-1);
+	m_lcPackage.InsertColumn(1,_T("头类型/长度"),LVCFMT_LEFT,60,-1);
+	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,60,-1);
 	m_lcPackage.InsertColumn(3,_T("时间戳类型"),LVCFMT_CENTER,80,-1);
-	m_lcPackage.InsertColumn(4,_T("时间戳"),LVCFMT_CENTER,100,-1);
-	m_lcPackage.InsertColumn(5,_T("时间戳差值"), LVCFMT_CENTER,100,-1);
-	m_lcPackage.InsertColumn(6,_T("大小(字节)"), LVCFMT_LEFT,80,-1);
-	m_lcPackage.InsertColumn(7,_T("统计(I帧间)"), LVCFMT_LEFT,80,-1);
+	m_lcPackage.InsertColumn(4,_T("时间戳"),LVCFMT_CENTER,120,-1);
+	m_lcPackage.InsertColumn(5,_T("相邻时间戳差值"), LVCFMT_CENTER,100,-1);
+	m_lcPackage.InsertColumn(6,_T("音视频同步"), LVCFMT_CENTER,120,-1);
+	m_lcPackage.InsertColumn(7,_T("大小(字节)"), LVCFMT_LEFT,80,-1);
+	m_lcPackage.InsertColumn(8,_T("统计(I帧间)"), LVCFMT_LEFT,80,-1);
 
 	((CButton*)GetDlgItem(IDC_CHECK_LOG_READ_INFO))->SetCheck(BST_CHECKED);
 	((CButton*)GetDlgItem(IDC_CHECK_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
@@ -756,7 +768,7 @@ strDelta2LastVideoOrAudioTs: 与上一个时间戳的差值.
 
 当视频和音频同时显示时:
 如果当前时间戳为Video, 则 strDelta2LastVideoOrAudioTs = 当前视频时间戳 - 上帧视频时间戳;
-如果当前时间戳为Audio, 则 strDelta2LastVideoOrAudioTs = 当前音频时间戳 - 上帧视频时间戳.
+如果当前时间戳为Audio, 则 strDelta2LastVideoOrAudioTs = 当前音频时间戳 - 上帧音频时间戳.
 这样计算是方便分析视音频不同步.
 
 如果仅显示音频:
@@ -812,19 +824,19 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 
 	if (RTMP_PACKET_SIZE_LARGE == psRTMPPackage->m_headerType)
 	{
-		strHeaderType.Format("0x%2x / 12字节", psRTMPPackage->m_headerType);
+		strHeaderType.Format("0x%2x/12字节", psRTMPPackage->m_headerType);
 	}
 	else if (RTMP_PACKET_SIZE_MEDIUM == psRTMPPackage->m_headerType)
 	{
-		strHeaderType.Format("0x%2x / 8字节", psRTMPPackage->m_headerType);
+		strHeaderType.Format("0x%2x/8字节", psRTMPPackage->m_headerType);
 	}
 	else if (RTMP_PACKET_SIZE_SMALL == psRTMPPackage->m_headerType)
 	{
-		strHeaderType.Format("0x%2x / 4字节", psRTMPPackage->m_headerType);
+		strHeaderType.Format("0x%2x/4字节", psRTMPPackage->m_headerType);
 	}
 	else if (RTMP_PACKET_SIZE_MINIMUM == psRTMPPackage->m_headerType)
 	{
-		strHeaderType.Format("0x%2x / 1字节", psRTMPPackage->m_headerType);
+		strHeaderType.Format("0x%2x/1字节", psRTMPPackage->m_headerType);
 	}
 	else
 	{
@@ -874,7 +886,7 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 				m_nVideoCntFromLastIFrame = 1;
 				m_nAudioCntFromLastIFrame = 0;
 
-				for (int i = 0; i < 8; i++)
+				for (int i = 0; i < LIST_ITEM_COUNT; i++)
 				{
 					m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));		
 					m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(61, 145,  64));
@@ -889,13 +901,20 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 				strPackageType.Format("Video (0x%x)", nVideoType);
 			}
 
-			if (-1 != m_nLastVideoTimestamp)
+			if (0 != m_nLastVideoTimestamp)
 			{
 				strDelta2LastVideoOrAudioTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastVideoTimestamp);
 			}
 			else
 			{
-				strDelta2LastVideoOrAudioTs = "No";
+				if (psRTMPPackage->m_nTimeStamp == 0)
+				{
+					strDelta2LastVideoOrAudioTs = "0";	
+				}
+				else
+				{
+					strDelta2LastVideoOrAudioTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastVideoTimestamp);
+				}	
 			}
 
 			m_nLastVideoTimestamp = psRTMPPackage->m_nTimeStamp;
@@ -903,7 +922,7 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 		else 
 		{
 			strDelta2LastVideoOrAudioTs = "No. (m_body is NULL)";
-			for (int i = 0; i < 8; i++)
+			for (int i = 0; i < LIST_ITEM_COUNT; i++)
 			{		
 				m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));		
 				m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(255,  153, 18));
@@ -949,56 +968,118 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 	m_lcAgentClient.SetItemBkColor(maxIndex, 4, RGB(96,96,96));*/
 
 	if (RTMP_PACKET_TYPE_AUDIO == psRTMPPackage->m_packetType)
-	{
-		// Only show audio info.
-		if (m_bShowAudio && !m_bShowVideo)
+	{		
+		if (0 != m_nLastAudioTimestamp)
 		{
-			if (-1 != strDelta2LastVideoOrAudioTs)
-			{
-				strDelta2LastVideoOrAudioTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastAudioTimestamp);
-			}
-			else
-			{
-				strDelta2LastVideoOrAudioTs = "No";
-			}
+			strDelta2LastVideoOrAudioTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastAudioTimestamp);			
 		}
 		else
 		{
-			if (-1 != strDelta2LastVideoOrAudioTs)
+			if (psRTMPPackage->m_nTimeStamp == 0)
 			{
-				strDelta2LastVideoOrAudioTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastVideoTimestamp);
+				strDelta2LastVideoOrAudioTs = "0";	
 			}
 			else
 			{
-				strDelta2LastVideoOrAudioTs = "No";
-			}
+				strDelta2LastVideoOrAudioTs.Format("%d", psRTMPPackage->m_nTimeStamp - m_nLastAudioTimestamp);
+			}	
 		}
-
+		
 		m_nLastAudioTimestamp = psRTMPPackage->m_nTimeStamp;
 	}
 
 	m_lcPackage.SetItemText(maxIndex, 5, strDelta2LastVideoOrAudioTs);
 
-	// > 200ms
+	int nDelta2LastVideoOrAudioTs = _ttoi(strDelta2LastVideoOrAudioTs);
+	if (nDelta2LastVideoOrAudioTs > 200 || nDelta2LastVideoOrAudioTs < -200)
+	{
+		for (int i = 0; i < LIST_ITEM_COUNT; i++)
+		{
+			m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));
+			m_lcPackage.SetItemBkColor(maxIndex, i, RGB(138, 43, 226));
+			//m_lcPackage.SetItemBkColor(maxIndex, i, RGB(255, 52, 179));	
+		}
+	}
+
 	int nAVNotSyncThreshold = _ttoi(m_strAVNotSyncThreshold);
-	if (_ttoi(strDelta2LastVideoOrAudioTs) > nAVNotSyncThreshold)
-	{	
-		for (int i = 0; i < 8; i++)
+
+	CString strSyncDelta(""); 
+	int     nSyncDelta;
+	bool    bOutSync = true; // 是否同步
+
+	if (m_bShowVideo && m_bShowAudio)
+	{
+		if (RTMP_PACKET_TYPE_VIDEO == psRTMPPackage->m_packetType)
+		{
+			if ((0 == m_nBaseVideoTimestamp) && !m_bInitBaseVideoTimestamp)
+			{
+				m_nBaseVideoTimestamp = psRTMPPackage->m_nTimeStamp;
+
+				nSyncDelta            = m_nBaseVideoTimestamp;
+				strSyncDelta.Format("视频基准时间戳:%d", nSyncDelta);
+
+				m_bInitBaseVideoTimestamp = true;
+			}
+			else
+			{
+				nSyncDelta = (psRTMPPackage->m_nTimeStamp - m_nBaseVideoTimestamp)
+							 - 
+					         (m_nLastAudioTimestamp - m_nBaseAudioTimestamp);
+
+				strSyncDelta.Format("%d", nSyncDelta);
+
+				if ((nSyncDelta > nAVNotSyncThreshold)/* || (nSyncDelta < -nAVNotSyncThreshold)*/)
+				{
+					bOutSync = false;
+				}
+			}
+		}
+		else if (RTMP_PACKET_TYPE_AUDIO == psRTMPPackage->m_packetType)
+		{
+			if ((0 == m_nBaseAudioTimestamp) && !m_bInitBaseAudioTimestamp)
+			{
+				m_nBaseAudioTimestamp = psRTMPPackage->m_nTimeStamp;
+
+				nSyncDelta            = m_nBaseAudioTimestamp;
+				strSyncDelta.Format("音频基准时间戳:%d", nSyncDelta);
+
+				m_bInitBaseAudioTimestamp = true;
+			}
+			else
+			{
+				nSyncDelta = (psRTMPPackage->m_nTimeStamp - m_nBaseAudioTimestamp)
+							  -
+					         (m_nLastVideoTimestamp - m_nBaseVideoTimestamp);
+
+				strSyncDelta.Format("%d", nSyncDelta);
+
+				if ((nSyncDelta > nAVNotSyncThreshold) /*|| (nSyncDelta < -nAVNotSyncThreshold)*/)
+				{
+					bOutSync = false;
+				}
+			}
+		}
+	}
+
+	m_lcPackage.SetItemText(maxIndex, 6, strSyncDelta);
+	if (!bOutSync)
+	{
+		for (int i = 0; i < LIST_ITEM_COUNT; i++)
 		{
 			m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255,255,255));
 			//m_lcAgentClient.SetItemBkColor(maxIndex,i, RGB(210, 105, 30));
 			m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(227, 23,  13));
 		}
 	}
-	
-	m_lcPackage.SetItemText(maxIndex, 6, psRTMPPackage->m_nBodySize);
+
+	m_lcPackage.SetItemText(maxIndex, 7, psRTMPPackage->m_nBodySize);
 
 	// > 16K 时
 	if (psRTMPPackage->m_nBodySize > 16 * 1024)
 	{
 		CString strBodySize;
 		strBodySize.Format("%d(%.2fKB)", psRTMPPackage->m_nBodySize, psRTMPPackage->m_nBodySize/1024.0);
-		m_lcPackage.SetItemText(maxIndex, 6, strBodySize);
+		m_lcPackage.SetItemText(maxIndex, 7, strBodySize);
 	}
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 6, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 6, RGB(0,0,255));*/
@@ -1008,7 +1089,7 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 		strVideoOrAudioCntFromLastIFrame = "";
 	}
 
-	m_lcPackage.SetItemText(maxIndex, 7, strVideoOrAudioCntFromLastIFrame);
+	m_lcPackage.SetItemText(maxIndex, 8, strVideoOrAudioCntFromLastIFrame);
 
 	// test begin
 	/*for (int i = 0; i < 7; i++)
@@ -1087,6 +1168,18 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStartAnalzye()
 
 	m_eTaskMode = kePxTaskMode_Analyze;
 
+	m_bInitBaseVideoTimestamp = false;
+	m_bInitBaseAudioTimestamp = false;
+
+	m_nBaseAudioTimestamp = -1;
+	m_nBaseVideoTimestamp = -1;
+
+	m_nLastVideoTimestamp = 0;
+	m_nLastAudioTimestamp = 0;
+
+	m_nVideoCntFromLastIFrame = 0;
+	m_nAudioCntFromLastIFrame = 0;
+
 	AfxBeginThread((AFX_THREADPROC)ThreadStartRecordOrAnalyze,
 		this,
 		THREAD_PRIORITY_NORMAL);
@@ -1109,6 +1202,12 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStopAnalzye()
 	GetDlgItem(IDC_BUTTON_START_ANALZYE)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_STOP_ANALZYE)->EnableWindow(TRUE);
 	GetDlgItem(IDC_CHECK_GENERATE_264_FILE)->EnableWindow(TRUE);
+
+	m_bInitBaseVideoTimestamp = false;
+	m_bInitBaseAudioTimestamp = false;
+
+	m_nBaseAudioTimestamp = -1;
+	m_nBaseVideoTimestamp = -1;
 }
 
 
@@ -1188,16 +1287,6 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonSaveAnalzyeInfo2File()
 		sSystemTime.wMinute,
 		sSystemTime.wSecond);
 
-	/*
-	m_lcPackage.InsertColumn(0,_T("选择"),LVCFMT_RIGHT,80,-1);
-	m_lcPackage.InsertColumn(1,_T("头类型/长度"),LVCFMT_LEFT,100,-1);
-	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,100,-1);
-	m_lcPackage.InsertColumn(3,_T("时间戳类型"),LVCFMT_CENTER,80,-1);
-	m_lcPackage.InsertColumn(4,_T("时间戳"),LVCFMT_CENTER,100,-1);
-	m_lcPackage.InsertColumn(5,_T("时间戳差值"), LVCFMT_CENTER,150,-1);
-	m_lcPackage.InsertColumn(6,_T("大小(字节)"), LVCFMT_LEFT,100,-1);
-	*/
-
 	int nRowCount = m_lcPackage.GetItemCount();//取行数
 
 	FILE *fpFile = fopen(szAnalyzeFileName, "at");
@@ -1208,9 +1297,9 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonSaveAnalzyeInfo2File()
 	}
 
 	fprintf(fpFile,  
-		    "%-6s%-16s%-16s%-16s%-16s%-16s%-20s%-15s\n",
-			"选择",  "头类型/长度", "包类型",  "时间戳类型",
-			"时间戳", "时间戳差值",  "大小(字节)", "统计(I帧间)");
+		    "%-6s%-16s%-16s%-16s%-16s%-16s%-16s%-20s%-15s\n",
+			"序号",  "头类型/长度", "包类型",  "时间戳类型",
+			"时间戳", "相邻时间戳差值", "音视频同步", "大小(字节)", "统计(I帧间)");
 
 	CString strLine("");
 
@@ -1233,7 +1322,7 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonSaveAnalzyeInfo2File()
 
 		fprintf(fpFile, "%s", strLine.GetBuffer(strLine.GetLength()));*/
 
-		fprintf(fpFile, "%-6s%-16s%-16s%-16s%-16s%-16s%-20s%-15s\n",
+		fprintf(fpFile, "%-6s%-16s%-16s%-16s%-16s%-16s%-16s%-20s%-15s\n",
 			m_lcPackage.GetItemText(nRow, 0),
 			m_lcPackage.GetItemText(nRow, 1),
 			m_lcPackage.GetItemText(nRow, 2),
@@ -1241,7 +1330,8 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonSaveAnalzyeInfo2File()
 			m_lcPackage.GetItemText(nRow, 4),
 			m_lcPackage.GetItemText(nRow, 5),
 			m_lcPackage.GetItemText(nRow, 6),
-			m_lcPackage.GetItemText(nRow, 7));
+			m_lcPackage.GetItemText(nRow, 7),
+			m_lcPackage.GetItemText(nRow, 8));
 	}
 
 	fclose(fpFile);

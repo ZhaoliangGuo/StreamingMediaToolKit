@@ -41,6 +41,10 @@ public:
 	CRITICAL_SECTION  m_csListCtrl; 
 	INT64             m_nLastVideoTimestamp;
     INT64             m_nLastAudioTimestamp;
+
+	INT64             m_nBaseVideoTimestamp;
+	INT64             m_nBaseAudioTimestamp;
+
 	bool              m_bShowVideo;
 	bool              m_bShowAudio;
 	bool              m_bGenerateH264File;     // 分析时是否同时生成.264文件
@@ -48,7 +52,9 @@ public:
 	bool              m_bStop;                 // 用于控制开始和结束
 	SPxRTSPArg        m_sRTSPArg;
 
+
 public:
 	afx_msg void OnBnClickedCheckSaveRtspProcessInfo2File();
 	void ActivateItem();
+	afx_msg void OnBnClickedCheckRtspClearPackageList();
 }; 

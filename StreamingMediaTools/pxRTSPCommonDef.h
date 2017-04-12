@@ -52,6 +52,7 @@ typedef struct SPxRTSPArg
 	bool               bAudio;
 	char               szRTSPProcessInfoFileName[_MAX_PATH];
 	bool               bRTSPProcessInfo2File; // 是否将于rtsp server交互过程信息保存在文件
+	char               szFileNamePrefix[_MAX_PATH];
 
 	SPxRTSPArg()
 	{
@@ -65,6 +66,7 @@ typedef struct SPxRTSPArg
 		bAudio           = true;
 		ZeroMemory(szRTSPProcessInfoFileName, _MAX_PATH);
 		bRTSPProcessInfo2File = false;
+		ZeroMemory(szFileNamePrefix, _MAX_PATH);
 	}
 
 	~SPxRTSPArg()
@@ -79,6 +81,7 @@ typedef struct SPxRTSPArg
 		bAudio           = true;
 		ZeroMemory(szRTSPProcessInfoFileName, _MAX_PATH);
 		bRTSPProcessInfo2File = false;
+		ZeroMemory(szFileNamePrefix, _MAX_PATH);
 	}
 }SPxRTSPArg;
 

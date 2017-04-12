@@ -9,6 +9,7 @@ using namespace std;
 
 #include "atlstr.h"
 #include "pxRTSPCommonDef.h"
+#include "OutputFile.hh"
 
 CString g_strAACMsg;
 extern HWND g_hAppWnd;         // 主界面句柄
@@ -47,6 +48,8 @@ CPxAACFileSink::~CPxAACFileSink()
 	ZeroMemory(m_szMsgBuffer, MSG_BUF_SIZE);
 
 	::DeleteCriticalSection(&m_csGettingFrame);    //释放里临界区
+
+	//CloseOutputFile(fOutFid);
 }
 
 CPxAACFileSink* CPxAACFileSink::createNew(UsageEnvironment& env, char const* fileName, unsigned bufferSize /*= 10000*/, Boolean oneFilePerFrame /*= False*/, char* in_pszSDP)

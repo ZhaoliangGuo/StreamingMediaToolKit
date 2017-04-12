@@ -26,6 +26,9 @@ CPxRTSPAnalyzerDlg::CPxRTSPAnalyzerDlg(CWnd* pParent /*=NULL*/)
 	m_bShowAudio = true; 
 	m_bShowVideo = true;
 
+	m_nBaseAudioTimestamp = 0;
+	m_nBaseVideoTimestamp = 0;
+
 	::InitializeCriticalSection(&m_csListCtrl);   //初始化临界区
 }
 
@@ -34,6 +37,9 @@ CPxRTSPAnalyzerDlg::~CPxRTSPAnalyzerDlg()
 	m_bStop = false;
 	m_bShowAudio = true; 
 	m_bShowVideo = true;
+
+	m_nBaseAudioTimestamp = 0;
+	m_nBaseVideoTimestamp = 0;
 
 	::DeleteCriticalSection(&m_csListCtrl);    //释放里临界区
 }
@@ -56,6 +62,7 @@ BEGIN_MESSAGE_MAP(CPxRTSPAnalyzerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_RTSP_TEST,                     &CPxRTSPAnalyzerDlg::OnBnClickedButtonRtspTest)
 	ON_MESSAGE(WM_ADD_RTSP_PACKAGE_TO_LIST,                 &CPxRTSPAnalyzerDlg::AddPackage2ListCtrl)
 	ON_BN_CLICKED(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE, &CPxRTSPAnalyzerDlg::OnBnClickedCheckSaveRtspProcessInfo2File)
+	ON_BN_CLICKED(IDC_CHECK_RTSP_CLEAR_PACKAGE_LIST, &CPxRTSPAnalyzerDlg::OnBnClickedCheckRtspClearPackageList)
 END_MESSAGE_MAP()
 
 // CPxRTSPAnalyzerDlg 消息处理程序
@@ -73,6 +80,10 @@ void CPxRTSPAnalyzerDlg::OnBnClickedButtonStartAnalzye()
 	m_bStop = false;
 
 	m_nLastVideoTimestamp = 0;
+	m_nLastAudioTimestamp = 0;
+
+	m_nBaseAudioTimestamp = 0;
+	m_nBaseVideoTimestamp = 0;
 
 	m_lcPackage.DeleteAllItems();
 
@@ -166,6 +177,100 @@ void CPxRTSPAnalyzerDlg::OnBnClickedCheckGenerate264File()
 
 void CPxRTSPAnalyzerDlg::OnBnClickedButtonSaveAnalzyeInfo2File()
 {
+	char szAppPath[MAX_PATH] = {0};
+	DWORD dwRet = GetModuleFileNameA(NULL, szAppPath, MAX_PATH);
+	if (dwRet == MAX_PATH)
+	{
+		strcpy(szAppPath, ".");
+	}
+
+	(strrchr(szAppPath,'\\'))[0] = '\0';
+
+	strcat(szAppPath, "\\RecordFile");
+
+	int nCount = m_strRTSP_URL.GetLength();
+	int nPos   = m_strRTSP_URL.ReverseFind('/');
+
+	m_strRTSP_URL.Replace("://", "_");
+	m_strRTSP_URL.Replace("@", "_");
+	m_strRTSP_URL.Replace(":", "_");
+
+	//CString strStreamName = m_strRTSP_URL.Right(nCount - nPos - 1);
+
+	CString strStreamName = m_strRTSP_URL;
+
+	SYSTEMTIME sSystemTime;
+	GetLocalTime(&sSystemTime);
+
+	char szAnalyzeFileName[_MAX_PATH] = {0};
+	sprintf_s(szAnalyzeFileName,
+		_MAX_PATH, 
+		"%s\\%s_%4d%02d%02d%02d%02d%02d.txt",
+		szAppPath,
+		strStreamName.GetBuffer(strStreamName.GetLength()),
+		sSystemTime.wYear, 
+		sSystemTime.wMonth, 
+		sSystemTime.wDay,
+		sSystemTime.wHour,
+		sSystemTime.wMinute,
+		sSystemTime.wSecond);
+
+	int nRowCount = m_lcPackage.GetItemCount();//取行数
+
+	FILE *fpFile = fopen(szAnalyzeFileName, "at");
+	if (NULL == fpFile)
+	{
+		g_strMsg.Format("szAnalyzeFileName:%s Open fail", szAnalyzeFileName);
+		g_logFile.WriteLogInfo(g_strMsg);
+	}
+
+	fprintf(fpFile,  
+		    "%-6s%-16s%-16s%-16s%-30s%-16s%\n",
+			"序号",  "包类型", "时间戳(毫秒)",  "相邻时间戳差值",
+			"音视频同步", "大小(字节)");
+
+	CString strLine("");
+
+	for(int nRow = 0; nRow < nRowCount; nRow++)
+	{
+		/*strLine =  m_lcPackage.GetItemText(nRow, 0);
+		strLine += " ";
+		strLine += m_lcPackage.GetItemText(nRow, 1);
+		strLine += " ";
+		strLine += m_lcPackage.GetItemText(nRow, 2);
+		strLine += " ";
+		strLine += m_lcPackage.GetItemText(nRow, 3);
+		strLine += " ";
+		strLine += m_lcPackage.GetItemText(nRow, 4);
+		strLine += " ";
+		strLine += m_lcPackage.GetItemText(nRow, 5);
+		strLine += " ";
+		strLine += m_lcPackage.GetItemText(nRow, 6);
+		strLine += "\n";
+
+		fprintf(fpFile, "%s", strLine.GetBuffer(strLine.GetLength()));*/
+
+		/*fprintf(fpFile, "%-6s%-16s%-16s%-16s%-30s%-16s%\n",
+			m_lcPackage.GetItemText(nRow, 0),
+			m_lcPackage.GetItemText(nRow, 1),
+			m_lcPackage.GetItemText(nRow, 2),
+			m_lcPackage.GetItemText(nRow, 3),
+			m_lcPackage.GetItemText(nRow, 4),
+			m_lcPackage.GetItemText(nRow, 5));*/
+
+		// for test
+		fprintf(fpFile, "%-6s%-16s%-16s%-16s\n",
+			m_lcPackage.GetItemText(nRow, 0),
+			m_lcPackage.GetItemText(nRow, 1),
+			m_lcPackage.GetItemText(nRow, 2),
+			m_lcPackage.GetItemText(nRow, 3));
+	}
+
+	fclose(fpFile);
+
+	CString strMsg("");
+	strMsg.Format("保存成功.\n %s", szAnalyzeFileName);
+	AfxMessageBox(strMsg);
 	
 }
 
@@ -215,9 +320,10 @@ void CPxRTSPAnalyzerDlg::Init()
 	m_lcPackage.InsertColumn(0,_T("序号"),LVCFMT_RIGHT,80,-1);
 	//m_lcPackage.InsertColumn(0,_T("序号"),LVCFMT_RIGHT,120,-1);
 	m_lcPackage.InsertColumn(1,_T("包类型"),LVCFMT_CENTER,100,-1);
-	m_lcPackage.InsertColumn(2,_T("时间戳(毫秒)"),LVCFMT_CENTER,100,-1);
-	m_lcPackage.InsertColumn(3,_T("时间戳差值"), LVCFMT_CENTER,150,-1);
-	m_lcPackage.InsertColumn(4,_T("大小(字节)"), LVCFMT_LEFT,100,-1);
+	m_lcPackage.InsertColumn(2,_T("时间戳(毫秒)"),LVCFMT_CENTER,150,-1);
+	m_lcPackage.InsertColumn(3,_T("相邻时间戳差值"), LVCFMT_CENTER,120,-1);
+	m_lcPackage.InsertColumn(4,_T("音视频同步"), LVCFMT_CENTER,200,-1);
+	m_lcPackage.InsertColumn(5,_T("大小(字节)"), LVCFMT_LEFT,80,-1);
 
 	((CButton*)GetDlgItem(IDC_CHECK_RTSP_LOG_READ_INFO))->SetCheck(BST_CHECKED);
 	((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
@@ -357,7 +463,7 @@ LRESULT CPxRTSPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 			{
 				strPackageType = "Video (I帧)";
 
-				for (int i = 0; i < 5; i++)
+				for (int i = 0; i < 6; i++)
 				{
 					m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));		
 					m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(61, 145,  64));
@@ -373,11 +479,25 @@ LRESULT CPxRTSPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 			}
 			else if (kePxNALUType_SPS == psRTSPPackage->eNALUType)
 			{
-				strPackageType = "Video (PPS)";
+				strPackageType = "Video (SPS)";
+
+				for (int i = 0; i < 6; i++)
+				{
+					m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));		
+					m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(153, 50, 204));
+				}
 			}
 			else if (kePxNALUType_PPS == psRTSPPackage->eNALUType)
 			{
-				strPackageType = "Video (SPS)";
+				strPackageType = "Video (PPS)";
+
+				for (int i = 0; i < 6; i++)
+				{
+					m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));		
+					//m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(0, 238, 0));
+					//m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(152, 251, 152));	
+					m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(50, 205, 50));					
+				}
 			}
 
 			/*if (-1 != m_nLastVideoTimestamp)
@@ -418,11 +538,89 @@ LRESULT CPxRTSPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 	/*m_lcAgentClient.SetItemTextColor(maxIndex, 4, RGB(255,255,255));
 	m_lcAgentClient.SetItemBkColor(maxIndex, 4, RGB(96,96,96));*/
 
+
+	int nAVNotSyncThreshold = _ttoi(m_strAVNotSyncThreshold);
+
+	if (nDelta2LastVideoOrAudioTs > 200 || nDelta2LastVideoOrAudioTs < -200)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255, 255, 255));
+			m_lcPackage.SetItemBkColor(maxIndex, i, RGB(138, 43, 226));
+			//m_lcPackage.SetItemBkColor(maxIndex, i, RGB(255, 52, 179));	
+		}
+	}
+
 	m_lcPackage.SetItemText(maxIndex, 3, strDelta2LastVideoOrAudioTs);
+
+	CString strSyncDelta(""); 
+	INT64   nSyncDelta;
+	bool    bOutSync = true; // 是否同步
+
+	if (m_bShowVideo && m_bShowAudio)
+	{
+		if (kePxMediaType_Video == psRTSPPackage->eMediaType)
+		{
+			if (0 == m_nBaseVideoTimestamp)
+			{
+				m_nBaseVideoTimestamp = psRTSPPackage->nTimeStamp;
+
+				nSyncDelta            = m_nBaseVideoTimestamp;
+				strSyncDelta.Format("视频基准时间戳:%I64d", nSyncDelta);
+			}
+			else
+			{
+				nSyncDelta = (psRTSPPackage->nTimeStamp - m_nBaseVideoTimestamp)
+					         - 
+							 (m_nLastAudioTimestamp - m_nBaseAudioTimestamp);
+
+				strSyncDelta.Format("%I64d", nSyncDelta);
+
+				if ((nSyncDelta > nAVNotSyncThreshold) || (nSyncDelta < -nAVNotSyncThreshold))
+				{
+					bOutSync = false;
+				}
+			}
+		}
+		else if (kePxMediaType_Audio == psRTSPPackage->eMediaType)
+		{
+			if (0 == m_nBaseAudioTimestamp)
+			{
+				m_nBaseAudioTimestamp = psRTSPPackage->nTimeStamp;
+
+				nSyncDelta            = m_nBaseAudioTimestamp;
+				strSyncDelta.Format("音频基准时间戳:%I64d", nSyncDelta);
+			}
+			else
+			{
+				nSyncDelta = (psRTSPPackage->nTimeStamp - m_nBaseAudioTimestamp)
+					         -
+							 (m_nLastVideoTimestamp - m_nBaseVideoTimestamp);
+
+				strSyncDelta.Format("%I64d", nSyncDelta);
+
+				if ((nSyncDelta > nAVNotSyncThreshold) || (nSyncDelta < -nAVNotSyncThreshold))
+				{
+					bOutSync = false;
+				}
+			}
+		}
+	}
+
+	m_lcPackage.SetItemText(maxIndex, 4, strSyncDelta);
+	if (!bOutSync)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			m_lcPackage.SetItemTextColor(maxIndex, i, RGB(255,255,255));
+			//m_lcAgentClient.SetItemBkColor(maxIndex,i, RGB(210, 105, 30));
+			m_lcPackage.SetItemBkColor(maxIndex,   i, RGB(227, 23,  13));
+		}
+	}
 
 	CString strFrameSize("");
 	strFrameSize.Format("%u", psRTSPPackage->uiFrameSize);
-	m_lcPackage.SetItemText(maxIndex, 4, strFrameSize);
+	m_lcPackage.SetItemText(maxIndex, 5, strFrameSize);
 
 	//设置最后一行被选中
 	m_lcPackage.SetItemState(m_lcPackage.GetItemCount() - 1, 
@@ -454,6 +652,13 @@ DWORD WINAPI ThreadStartAnalyzeRTSP(LPVOID pParam)
 
 	char szRTSP_URL[_MAX_PATH] = {0};
 	strncpy(szRTSP_URL, (LPCTSTR)pRTSPAnalyzerDlg->m_strRTSP_URL, sizeof(szRTSP_URL));
+
+	if (NULL == szRTSP_URL)
+	{
+		AfxMessageBox("获取RTSP URL失败!!!");
+
+		return -1;
+	}
 
 	g_strMsg.Format("URL:%s. 开始分析...", szRTSP_URL);		
 	::PostMessage(g_hAppWnd, WM_ADD_LOG_TO_LIST, NULL, (LPARAM)g_strMsg.GetBuffer());
@@ -520,6 +725,18 @@ DWORD WINAPI ThreadStartAnalyzeRTSP(LPVOID pParam)
 	sprintf_s(pRTSPAnalyzerDlg->m_sRTSPArg.szRTSPProcessInfoFileName,
 		_MAX_PATH, 
 		"%s\\%s_%4d-%02d-%02d_%02d%02d%02d.txt",
+		szAppPath,
+		strStreamName.GetBuffer(strStreamName.GetLength()),
+		sSystemTime.wYear, 
+		sSystemTime.wMonth, 
+		sSystemTime.wDay,
+		sSystemTime.wHour,
+		sSystemTime.wMinute,
+		sSystemTime.wSecond);
+
+	sprintf_s(pRTSPAnalyzerDlg->m_sRTSPArg.szFileNamePrefix,
+		_MAX_PATH, 
+		"%s\\%s_%4d-%02d-%02d_%02d%02d%02d",
 		szAppPath,
 		strStreamName.GetBuffer(strStreamName.GetLength()),
 		sSystemTime.wYear, 
@@ -652,4 +869,13 @@ void CPxRTSPAnalyzerDlg::OnBnClickedCheckSaveRtspProcessInfo2File()
 	::PostMessage(g_hAppWnd, WM_ADD_LOG_TO_LIST, NULL, (LPARAM)g_strMsg.GetBuffer());
 
 	UpdateData(FALSE);
+}
+
+
+void CPxRTSPAnalyzerDlg::OnBnClickedCheckRtspClearPackageList()
+{
+	if (((CButton *)GetDlgItem(IDC_CHECK_RTSP_CLEAR_PACKAGE_LIST))->GetCheck() == BST_CHECKED)
+	{
+		m_lcPackage.DeleteAllItems();
+	}
 }

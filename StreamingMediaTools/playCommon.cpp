@@ -105,7 +105,8 @@ unsigned short movieHeight = 180; // default
 Boolean movieHeightOptionSet = False;
 unsigned movieFPS = 15; // default
 Boolean movieFPSOptionSet = False;
-char const* fileNamePrefix = "";
+//char const* fileNamePrefix = "";
+char fileNamePrefix[_MAX_PATH] = {0};
 unsigned fileSinkBufferSize = 100000;
 unsigned socketInputBufferSize = 0;
 Boolean packetLossCompensate = False;
@@ -178,6 +179,8 @@ int StartOpenRTSP(SPxRTSPArg &rsRTSPArg)
 	scheduler = BasicTaskScheduler::createNew();
 	env       = BasicUsageEnvironment::createNew(*scheduler);
 
+	//env->m_bVideoRecording = true;
+
 	sCurrentRTSPArg = rsRTSPArg;
 
 	strcpy(env->szRTSPProcessInfoFileName, rsRTSPArg.szRTSPProcessInfoFileName);
@@ -227,6 +230,11 @@ int StartOpenRTSP(SPxRTSPArg &rsRTSPArg)
 			strcpy_s(szRTSPProcessInfoFileName,      OUTPUT_FILENAME_LEN, rsRTSPArg.szRTSPProcessInfoFileName);
 			strcpy_s(env->szRTSPProcessInfoFileName, OUTPUT_FILENAME_LEN, rsRTSPArg.szRTSPProcessInfoFileName);
 		}
+	}
+
+	if (NULL != rsRTSPArg.szFileNamePrefix)
+	{
+		strcpy_s(fileNamePrefix, _MAX_PATH, rsRTSPArg.szFileNamePrefix);
 	}
 		
 	if (rsRTSPArg.bRecord)
@@ -294,7 +302,12 @@ int StopOpenRTSP()
 {
 	eventLoopWatchVariable = 1;
 
+	//env->m_bVideoRecording = false;
+
 	Sleep(100);
+
+	// First, close the existing output files:
+	closeMediaSinks();
 
 	if (env)
 	{
@@ -313,13 +326,19 @@ int StopOpenRTSP()
 		session = NULL;
 	}
 
+	//shutdown();
+
 	/*if (setupIter)
 	{
 		setupIter = NULL;
 	}*/
-	
 
-	/*if (subsession)
+	/*if (subsession->sink)
+	{
+		subsession->sink = NULL;
+	}
+	
+	if (subsession)
 	{
 		subsession = NULL;
 	}*/
@@ -1438,10 +1457,45 @@ void createOutputFiles(char const* periodicFilenameSuffix)
 			{
 				// Output file name is
 				//     "<filename-prefix><medium_name>-<codec_name>-<counter><periodicFilenameSuffix>"
-				static unsigned streamCounter = 0;
+				/*static unsigned streamCounter = 0;
 				snprintf(outFileName, sizeof outFileName, "%s%s-%s-%d%s",
 					fileNamePrefix, subsession->mediumName(),
-					subsession->codecName(), ++streamCounter, periodicFilenameSuffix);
+					subsession->codecName(), ++streamCounter, periodicFilenameSuffix);*/
+
+				char szFilenameSuffix[16] = {0};
+
+				if (strcmp(subsession->mediumName(), "video") == 0) 
+				{
+					if (strcmp(subsession->codecName(), "H264") == 0) 
+					{
+						strcpy_s(szFilenameSuffix, 16, ".264");
+					}
+
+					sprintf_s(env->szVideoFileName, 
+						_MAX_PATH, "%s-%s-%s%s", 
+						fileNamePrefix, 
+						subsession->mediumName(),
+						subsession->codecName(), 
+						szFilenameSuffix);
+
+					strcpy_s(outFileName, OUTPUT_FILENAME_LEN, env->szVideoFileName);
+				}
+				else if (strcmp(subsession->mediumName(), "audio") == 0) 
+				{
+					if (strcmp(subsession->codecName(), "MPEG4-GENERIC") == 0) 
+					{
+						strcpy_s(szFilenameSuffix, 16, ".aac");
+					}
+
+					sprintf_s(env->szAudioFileName, 
+						_MAX_PATH, "%s-%s-%s%s", 
+						fileNamePrefix, 
+						subsession->mediumName(),
+						subsession->codecName(), 
+						szFilenameSuffix);
+
+					strcpy_s(outFileName, OUTPUT_FILENAME_LEN, env->szAudioFileName);
+				}
 			} 
 			else 
 			{
@@ -1473,10 +1527,10 @@ void createOutputFiles(char const* periodicFilenameSuffix)
 
 					struct  timeval tv={0, 0};    
 					unsigned char  start_code[4] = {0x00, 0x00, 0x00, 0x01};
-					fileSink->addData(start_code, 4, tv);    
+					/*fileSink->addData(start_code, 4, tv);    
 					fileSink->addData(sps[0].sPropBytes, sps[0].sPropLength, tv);    
 					fileSink->addData(start_code, 4, tv);    
-					fileSink->addData(sps[1].sPropBytes, sps[1].sPropLength, tv);  
+					fileSink->addData(sps[1].sPropBytes, sps[1].sPropLength, tv); */ 
 
 					delete [] sps;  
 					sps = NULL;
@@ -1628,8 +1682,7 @@ void createPeriodicOutputFiles()
 	createOutputFiles(periodicFileNameSuffix);
 
 	// Schedule an event for writing the next output file:
-	periodicFileOutputTask = env->taskScheduler().scheduleDelayedTask(fileOutputInterval*1000000,
-		                                                             (TaskFunc*)periodicFileOutputTimerHandler,		                                                             (void*)NULL);
+	periodicFileOutputTask = env->taskScheduler().scheduleDelayedTask(fileOutputInterval*1000000,	                                                             (TaskFunc*)periodicFileOutputTimerHandler,		                                                             (void*)NULL);
 }
 
 void setupStreams() 

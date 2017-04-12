@@ -41,8 +41,15 @@ public:
 	void TestAddPackage2ListCtrl();
 	CReportCtrl m_lcPackage;
 	afx_msg void OnBnClickedButtonRtmpTest();
+
 	int m_nLastVideoTimestamp;
 	int m_nLastAudioTimestamp;
+
+	int m_nBaseVideoTimestamp;
+	int m_nBaseAudioTimestamp;
+
+	bool m_bInitBaseVideoTimestamp;
+	bool m_bInitBaseAudioTimestamp;
 
 	CRITICAL_SECTION  m_csListCtrl; 
 	CString m_strAVNotSyncThreshold; // 音视频不同步的过滤阈值(毫秒)

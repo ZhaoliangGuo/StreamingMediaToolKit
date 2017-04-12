@@ -47,6 +47,9 @@ protected:
 
 private:
 	CRITICAL_SECTION  m_csGettingFrame; 
+
+	bool m_bHasWriteSPS;
+	bool m_bHasWritePPS;
 };
 
 #endif

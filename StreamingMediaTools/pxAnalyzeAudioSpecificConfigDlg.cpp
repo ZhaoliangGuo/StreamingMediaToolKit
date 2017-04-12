@@ -7,6 +7,10 @@
 #include "afxdialogex.h"
 #include "pxCommonDef.h"
 
+// Log
+extern CLogFile g_logFile;
+extern CString  g_strMsg;
+
 
 // CPxAnalyzeAudioSpecificConfigDlg ¶Ô»°¿ò
 
@@ -69,10 +73,27 @@ void CPxAnalyzeAudioSpecificConfigDlg::OnBnClickedButtonAnalzyeAudioSpecificConf
 
 	char szAudioSpecicConfig[64] = {0};
 
-	string strtmp          = audioSpecicConfig.substr(0,2);
+	/*string strtmp          = audioSpecicConfig.substr(0,2);
 	szAudioSpecicConfig[0] = strtol(strtmp.c_str(), NULL, 16); 
 	strtmp                 = audioSpecicConfig.substr(2,2);
-	szAudioSpecicConfig[1] = strtol(strtmp.c_str(), NULL, 16);
+	szAudioSpecicConfig[1] = strtol(strtmp.c_str(), NULL, 16);*/
+
+	char szTemp1[2] = {0};
+	char szTemp2[2] = {0};
+
+	memcpy(szTemp1, audioSpecicConfig.c_str(), 1);
+	memcpy(szTemp2, audioSpecicConfig.c_str() + 1, 1);
+	szAudioSpecicConfig[0] = strtol(szTemp1, NULL, 16) << 4
+		| strtol(szTemp2, NULL, 16); 
+
+	memcpy(szTemp1, audioSpecicConfig.c_str() + 2, 1);
+	memcpy(szTemp2, audioSpecicConfig.c_str() + 3, 1);
+	szAudioSpecicConfig[1] = strtol(szTemp1, NULL, 16) << 4
+		| strtol(szTemp2, NULL, 16); 
+
+	g_logFile.WriteLogInfo("AACConfig: %02x%02x; ", 
+		                   (unsigned char)szAudioSpecicConfig[0], 
+		                   (unsigned char)szAudioSpecicConfig[1]);
 
 	/*strcpy(szAudioSpecicConfig, 
 	m_strAudioSpecicConfig.GetBuffer(m_strAudioSpecicConfig.GetLength()));*/

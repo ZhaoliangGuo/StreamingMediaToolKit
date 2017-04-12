@@ -49,6 +49,8 @@ CStreamingMediaToolsDlg::CStreamingMediaToolsDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CStreamingMediaToolsDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);	
+
+	ZeroMemory(m_szMsgBuffer, MESSAGE_BUFFER_SIZE);
 }
 
 void CStreamingMediaToolsDlg::DoDataExchange(CDataExchange* pDX)
@@ -338,12 +340,13 @@ LRESULT CStreamingMediaToolsDlg::AddLog2List( WPARAM wParam, LPARAM lParam )
 	CString strMsg;
 
 	//int nLen = strlen(pszMsg);
-	char szMsgBuffer[1024] = {0};
-	strcpy_s(szMsgBuffer, 1024, pszMsg);
+
+	ZeroMemory(m_szMsgBuffer, MESSAGE_BUFFER_SIZE);
+	strcpy_s(m_szMsgBuffer, MESSAGE_BUFFER_SIZE, pszMsg);
 
 	try
 	{
-		strMsg.Format("%s", szMsgBuffer);
+		strMsg.Format("%s", m_szMsgBuffer);
 	}
 	catch (CException* e)
 	{
