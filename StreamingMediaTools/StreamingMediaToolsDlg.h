@@ -63,4 +63,6 @@ public:
 
 private:
 	char m_szMsgBuffer[MESSAGE_BUFFER_SIZE];
+public:
+	afx_msg void OnClose();
 };

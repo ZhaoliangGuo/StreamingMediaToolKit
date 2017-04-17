@@ -77,6 +77,7 @@ BEGIN_MESSAGE_MAP(CStreamingMediaToolsDlg, CDialogEx)
 	ON_COMMAND(ID_RIGHT_MENU_EXIT, &CStreamingMediaToolsDlg::OnRightMenuExit)
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_RIGHT_MENU_OPEN_RECORD_DIR, &CStreamingMediaToolsDlg::OnRightMenuOpenRecordDir)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -511,4 +512,12 @@ void CStreamingMediaToolsDlg::OnRightMenuOpenRecordDir()
 	strcat(szAppPath, "\\RecordFile\\");
 
 	ShellExecuteA(NULL, "open", szAppPath, NULL, NULL, SW_NORMAL);
+}
+
+
+void CStreamingMediaToolsDlg::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	CDialogEx::OnClose();
 }

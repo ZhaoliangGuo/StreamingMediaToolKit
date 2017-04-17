@@ -702,7 +702,7 @@ BOOL CPxRTMPAnalyzerDlg::OnInitDialog()
 
 void CPxRTMPAnalyzerDlg::Init()
 {
-	UpdateData();
+	//UpdateData();
 
 	// 从ini文件中读取RTMP_URL
 
@@ -744,11 +744,65 @@ void CPxRTMPAnalyzerDlg::Init()
 	m_lcPackage.InsertColumn(8,_T("统计(I帧间)"), LVCFMT_LEFT,80,-1);
 
 	((CButton*)GetDlgItem(IDC_CHECK_LOG_READ_INFO))->SetCheck(BST_CHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_SHOW_AUDIO_INFO))->SetCheck(BST_CHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_GENERATE_264_FILE))->SetCheck(BST_UNCHECKED);
 
-	UpdateData(FALSE);
+	char szShowVideo[8] = {0};
+	GetPrivateProfileString("RTMP", 
+		"ShowVideo", 
+		"1", 
+		szShowVideo, 
+		sizeof(szShowVideo), 
+		g_strConfFile);
+
+	char szShowAudio[8] = {0};
+	GetPrivateProfileString("RTMP", 
+		"ShowAudio", 
+		"1", 
+		szShowAudio, 
+		sizeof(szShowAudio), 
+		g_strConfFile);
+
+	char szGenerateH264File[8] = {0};
+	GetPrivateProfileString("RTMP", 
+		"GenerateH264File", 
+		"0", 
+		szGenerateH264File, 
+		sizeof(szGenerateH264File), 
+		g_strConfFile);
+
+	if (0 == strcmp(szShowVideo, "1"))
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
+		m_bShowVideo = true;
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_SHOW_VIDEO_INFO))->SetCheck(BST_UNCHECKED);
+		m_bShowVideo = false;
+	}
+
+	if (0 == strcmp(szShowAudio, "1"))
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_SHOW_AUDIO_INFO))->SetCheck(BST_CHECKED);
+		m_bShowAudio = true;
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_SHOW_AUDIO_INFO))->SetCheck(BST_UNCHECKED);
+		m_bShowAudio = false;
+	}
+
+	if (0 == strcmp(szGenerateH264File, "1"))
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_GENERATE_264_FILE))->SetCheck(BST_CHECKED);
+		m_bGenerateH264File = true;
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_GENERATE_264_FILE))->SetCheck(BST_UNCHECKED);
+		m_bGenerateH264File = false;
+	}
+
+	//UpdateData(FALSE);
 }
 
 void CPxRTMPAnalyzerDlg::SaveConfig()
@@ -757,6 +811,10 @@ void CPxRTMPAnalyzerDlg::SaveConfig()
 
 	WritePrivateProfileString("RTMP", "URL",                m_strRTMP_URL,           g_strConfFile);
 	WritePrivateProfileString("RTMP", "AVNotSyncThreshold", m_strAVNotSyncThreshold, g_strConfFile);
+
+	WritePrivateProfileString("RTMP", "ShowVideo",          m_bShowVideo ? "1" : "0",  g_strConfFile);
+	WritePrivateProfileString("RTMP", "ShowAudio",          m_bShowAudio ? "1" : "0",  g_strConfFile);
+	WritePrivateProfileString("RTMP", "GenerateH264File",   m_bGenerateH264File ? "1" : "0",  g_strConfFile);
 
 	UpdateData(FALSE);
 }

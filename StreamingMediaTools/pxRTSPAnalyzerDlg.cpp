@@ -61,8 +61,8 @@ BEGIN_MESSAGE_MAP(CPxRTSPAnalyzerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_RTSP_SAVE_ANALZYE_INFO_2_FILE, &CPxRTSPAnalyzerDlg::OnBnClickedButtonSaveAnalzyeInfo2File)
 	ON_BN_CLICKED(IDC_BUTTON_RTSP_TEST,                     &CPxRTSPAnalyzerDlg::OnBnClickedButtonRtspTest)
 	ON_MESSAGE(WM_ADD_RTSP_PACKAGE_TO_LIST,                 &CPxRTSPAnalyzerDlg::AddPackage2ListCtrl)
-	ON_BN_CLICKED(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE, &CPxRTSPAnalyzerDlg::OnBnClickedCheckSaveRtspProcessInfo2File)
-	ON_BN_CLICKED(IDC_CHECK_RTSP_CLEAR_PACKAGE_LIST, &CPxRTSPAnalyzerDlg::OnBnClickedCheckRtspClearPackageList)
+	ON_BN_CLICKED(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE,  &CPxRTSPAnalyzerDlg::OnBnClickedCheckSaveRtspProcessInfo2File)
+	ON_BN_CLICKED(IDC_CHECK_RTSP_CLEAR_PACKAGE_LIST,        &CPxRTSPAnalyzerDlg::OnBnClickedCheckRtspClearPackageList)
 END_MESSAGE_MAP()
 
 // CPxRTSPAnalyzerDlg 消息处理程序
@@ -291,7 +291,7 @@ BOOL CPxRTSPAnalyzerDlg::OnInitDialog()
 
 void CPxRTSPAnalyzerDlg::Init()
 {
-	UpdateData();
+	//UpdateData();
 
 	// 从ini文件中读取RTSP_URL
 	char szRTMP_URL[_MAX_PATH] = {0};
@@ -325,13 +325,87 @@ void CPxRTSPAnalyzerDlg::Init()
 	m_lcPackage.InsertColumn(4,_T("音视频同步"), LVCFMT_CENTER,200,-1);
 	m_lcPackage.InsertColumn(5,_T("大小(字节)"), LVCFMT_LEFT,80,-1);
 
+	char szShowVideo[8] = {0};
+	GetPrivateProfileString("RTSP", 
+		"ShowVideo", 
+		"1", 
+		szShowVideo, 
+		sizeof(szShowVideo), 
+		g_strConfFile);
+
+	char szShowAudio[8] = {0};
+	GetPrivateProfileString("RTSP", 
+		"ShowAudio", 
+		"1", 
+		szShowAudio, 
+		sizeof(szShowAudio), 
+		g_strConfFile);
+
+	char szGenerateH264File[8] = {0};
+	GetPrivateProfileString("RTSP", 
+		"GenerateH264File", 
+		"0", 
+		szGenerateH264File, 
+		sizeof(szGenerateH264File), 
+		g_strConfFile);
+
+	if (0 == strcmp(szShowVideo, "1"))
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
+		m_bShowVideo = true;
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->SetCheck(BST_UNCHECKED);
+		m_bShowVideo = false;
+	}
+
+	if (0 == strcmp(szShowAudio, "1"))
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_AUDIO_INFO))->SetCheck(BST_CHECKED);
+		m_bShowAudio = true;
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_AUDIO_INFO))->SetCheck(BST_UNCHECKED);
+		m_bShowAudio = false;
+	}
+
+	if (0 == strcmp(szGenerateH264File, "1"))
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_RTSP_GENERATE_264_FILE))->SetCheck(BST_CHECKED);
+		m_bGenerateH264File = true;
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_RTSP_GENERATE_264_FILE))->SetCheck(BST_UNCHECKED);
+		m_bGenerateH264File = false;
+	}
+
+	char szSaveRTSPProcessInfo2File[8] = {0};
+	GetPrivateProfileString("RTSP", 
+		"SaveRTSPProcessInfo2File", 
+		"0", 
+		szSaveRTSPProcessInfo2File, 
+		sizeof(szSaveRTSPProcessInfo2File), 
+		g_strConfFile);
+
+	if (0 == strcmp(szSaveRTSPProcessInfo2File, "1"))
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE))->SetCheck(BST_CHECKED);
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE))->SetCheck(BST_UNCHECKED);
+	}
+
 	((CButton*)GetDlgItem(IDC_CHECK_RTSP_LOG_READ_INFO))->SetCheck(BST_CHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
+	/*((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
 	((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_AUDIO_INFO))->SetCheck(BST_CHECKED);
 	((CButton*)GetDlgItem(IDC_CHECK_RTSP_GENERATE_264_FILE))->SetCheck(BST_UNCHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE))->SetCheck(BST_UNCHECKED);
+	((CButton*)GetDlgItem(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE))->SetCheck(BST_UNCHECKED);*/
 
-	UpdateData(FALSE);
+	//UpdateData(FALSE);
 }
 
 void CPxRTSPAnalyzerDlg::SaveConfig()
@@ -340,6 +414,18 @@ void CPxRTSPAnalyzerDlg::SaveConfig()
 
 	WritePrivateProfileString("RTSP", "URL",                m_strRTSP_URL,           g_strConfFile);
 	WritePrivateProfileString("RTSP", "AVNotSyncThreshold", m_strAVNotSyncThreshold, g_strConfFile);
+
+	WritePrivateProfileString("RTSP", "ShowVideo",          m_bShowVideo ? "1" : "0",  g_strConfFile);
+	WritePrivateProfileString("RTSP", "ShowAudio",          m_bShowAudio ? "1" : "0",  g_strConfFile);
+
+	if (((CButton *)GetDlgItem(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE))->GetCheck() == BST_CHECKED)
+	{
+		WritePrivateProfileString("RTSP", "SaveRTSPProcessInfo2File", "1",  g_strConfFile);
+	}
+	else
+	{
+		WritePrivateProfileString("RTSP", "SaveRTSPProcessInfo2File", "0",  g_strConfFile);
+	}
 
 	UpdateData(FALSE);
 }
