@@ -734,12 +734,12 @@ void CPxRTMPAnalyzerDlg::Init()
 	m_lcAgentClient.SetTextColor(RGB(255,255,255));*/ // 显示字体的颜色
 
 	m_lcPackage.InsertColumn(0,_T("序号"),LVCFMT_RIGHT,40,-1);
-	m_lcPackage.InsertColumn(1,_T("头类型/长度"),LVCFMT_LEFT,60,-1);
-	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,60,-1);
-	m_lcPackage.InsertColumn(3,_T("时间戳类型"),LVCFMT_CENTER,80,-1);
+	m_lcPackage.InsertColumn(1,_T("头类型/长度"),LVCFMT_LEFT,40,-1);
+	m_lcPackage.InsertColumn(2,_T("包类型"),LVCFMT_CENTER,80,-1);
+	m_lcPackage.InsertColumn(3,_T("时间戳类型"),LVCFMT_CENTER,40,-1);
 	m_lcPackage.InsertColumn(4,_T("时间戳"),LVCFMT_CENTER,120,-1);
 	m_lcPackage.InsertColumn(5,_T("相邻时间戳差值"), LVCFMT_CENTER,100,-1);
-	m_lcPackage.InsertColumn(6,_T("音视频同步"), LVCFMT_CENTER,120,-1);
+	m_lcPackage.InsertColumn(6,_T("音视频同步"), LVCFMT_CENTER,160,-1);
 	m_lcPackage.InsertColumn(7,_T("大小(字节)"), LVCFMT_LEFT,80,-1);
 	m_lcPackage.InsertColumn(8,_T("统计(I帧间)"), LVCFMT_LEFT,80,-1);
 
@@ -1069,14 +1069,23 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 	{
 		if (RTMP_PACKET_TYPE_VIDEO == psRTMPPackage->m_packetType)
 		{
+			if (psRTMPPackage->m_hasAbsTimestamp != 0) // 绝对时间戳
+			{
+				m_bInitBaseVideoTimestamp = false;
+				m_nBaseVideoTimestamp     = 0;
+			}
+
 			if ((0 == m_nBaseVideoTimestamp) && !m_bInitBaseVideoTimestamp)
 			{
-				m_nBaseVideoTimestamp = psRTMPPackage->m_nTimeStamp;
+				if (psRTMPPackage->m_hasAbsTimestamp != 0)
+				{
+					m_nBaseVideoTimestamp = psRTMPPackage->m_nTimeStamp;
 
-				nSyncDelta            = m_nBaseVideoTimestamp;
-				strSyncDelta.Format("视频基准时间戳:%d", nSyncDelta);
+					nSyncDelta            = m_nBaseVideoTimestamp;
+					strSyncDelta.Format("视频基准时间戳:%d", nSyncDelta);
 
-				m_bInitBaseVideoTimestamp = true;
+					m_bInitBaseVideoTimestamp = true;
+				}	
 			}
 			else
 			{
