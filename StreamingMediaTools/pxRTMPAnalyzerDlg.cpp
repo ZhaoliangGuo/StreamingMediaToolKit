@@ -695,6 +695,8 @@ BOOL CPxRTMPAnalyzerDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	Init();
+
+	InitCheckBox();
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
@@ -702,7 +704,7 @@ BOOL CPxRTMPAnalyzerDlg::OnInitDialog()
 
 void CPxRTMPAnalyzerDlg::Init()
 {
-	//UpdateData();
+	UpdateData();
 
 	// 从ini文件中读取RTMP_URL
 
@@ -743,6 +745,11 @@ void CPxRTMPAnalyzerDlg::Init()
 	m_lcPackage.InsertColumn(7,_T("大小(字节)"), LVCFMT_LEFT,80,-1);
 	m_lcPackage.InsertColumn(8,_T("统计(I帧间)"), LVCFMT_LEFT,80,-1);
 
+	UpdateData(FALSE);
+}
+
+void CPxRTMPAnalyzerDlg::InitCheckBox()
+{
 	((CButton*)GetDlgItem(IDC_CHECK_LOG_READ_INFO))->SetCheck(BST_CHECKED);
 
 	char szShowVideo[8] = {0};
@@ -801,8 +808,6 @@ void CPxRTMPAnalyzerDlg::Init()
 		((CButton*)GetDlgItem(IDC_CHECK_GENERATE_264_FILE))->SetCheck(BST_UNCHECKED);
 		m_bGenerateH264File = false;
 	}
-
-	//UpdateData(FALSE);
 }
 
 void CPxRTMPAnalyzerDlg::SaveConfig()
@@ -1103,6 +1108,12 @@ LRESULT CPxRTMPAnalyzerDlg::AddPackage2ListCtrl( WPARAM wParam, LPARAM lParam )
 		}
 		else if (RTMP_PACKET_TYPE_AUDIO == psRTMPPackage->m_packetType)
 		{
+			if (psRTMPPackage->m_hasAbsTimestamp != 0) // 绝对时间戳
+			{
+				m_bInitBaseAudioTimestamp = false;
+				m_nBaseAudioTimestamp     = 0;
+			}
+
 			if ((0 == m_nBaseAudioTimestamp) && !m_bInitBaseAudioTimestamp)
 			{
 				m_nBaseAudioTimestamp = psRTMPPackage->m_nTimeStamp;
@@ -1238,8 +1249,8 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStartAnalzye()
 	m_bInitBaseVideoTimestamp = false;
 	m_bInitBaseAudioTimestamp = false;
 
-	m_nBaseAudioTimestamp = -1;
-	m_nBaseVideoTimestamp = -1;
+	m_nBaseAudioTimestamp = 0;
+	m_nBaseVideoTimestamp = 0;
 
 	m_nLastVideoTimestamp = 0;
 	m_nLastAudioTimestamp = 0;
@@ -1273,8 +1284,8 @@ void CPxRTMPAnalyzerDlg::OnBnClickedButtonStopAnalzye()
 	m_bInitBaseVideoTimestamp = false;
 	m_bInitBaseAudioTimestamp = false;
 
-	m_nBaseAudioTimestamp = -1;
-	m_nBaseVideoTimestamp = -1;
+	m_nBaseAudioTimestamp = 0;
+	m_nBaseVideoTimestamp = 0;
 }
 
 

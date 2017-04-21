@@ -66,7 +66,7 @@ public:
 	afx_msg void OnBnClickedCheckShowVideoInfo();
 	afx_msg void OnBnClickedButtonSaveAnalzyeInfo2File();
 	afx_msg void OnBnClickedCheckGenerate264File();
-
+	void InitCheckBox();
 	bool m_bGenerateH264File; // 分析时是否同时生成.264文件
 
 	int m_nVideoCntFromLastIFrame;

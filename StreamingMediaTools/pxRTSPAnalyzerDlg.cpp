@@ -285,13 +285,15 @@ BOOL CPxRTSPAnalyzerDlg::OnInitDialog()
 
 	Init();
 
+	InitCheckBox();
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常: OCX 属性页应返回 FALSE
 }
 
 void CPxRTSPAnalyzerDlg::Init()
 {
-	//UpdateData();
+	UpdateData();
 
 	// 从ini文件中读取RTSP_URL
 	char szRTMP_URL[_MAX_PATH] = {0};
@@ -325,6 +327,16 @@ void CPxRTSPAnalyzerDlg::Init()
 	m_lcPackage.InsertColumn(4,_T("音视频同步"), LVCFMT_CENTER,200,-1);
 	m_lcPackage.InsertColumn(5,_T("大小(字节)"), LVCFMT_LEFT,80,-1);
 
+	/*((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
+	((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_AUDIO_INFO))->SetCheck(BST_CHECKED);
+	((CButton*)GetDlgItem(IDC_CHECK_RTSP_GENERATE_264_FILE))->SetCheck(BST_UNCHECKED);
+	((CButton*)GetDlgItem(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE))->SetCheck(BST_UNCHECKED);*/
+
+	UpdateData(FALSE);
+}
+
+void CPxRTSPAnalyzerDlg::InitCheckBox()
+{
 	char szShowVideo[8] = {0};
 	GetPrivateProfileString("RTSP", 
 		"ShowVideo", 
@@ -400,12 +412,6 @@ void CPxRTSPAnalyzerDlg::Init()
 	}
 
 	((CButton*)GetDlgItem(IDC_CHECK_RTSP_LOG_READ_INFO))->SetCheck(BST_CHECKED);
-	/*((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_VIDEO_INFO))->SetCheck(BST_CHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_RTSP_SHOW_AUDIO_INFO))->SetCheck(BST_CHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_RTSP_GENERATE_264_FILE))->SetCheck(BST_UNCHECKED);
-	((CButton*)GetDlgItem(IDC_CHECK_SAVE_RTSP_PROCESS_INFO_2_FILE))->SetCheck(BST_UNCHECKED);*/
-
-	//UpdateData(FALSE);
 }
 
 void CPxRTSPAnalyzerDlg::SaveConfig()

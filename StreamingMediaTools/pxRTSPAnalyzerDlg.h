@@ -52,9 +52,9 @@ public:
 	bool              m_bStop;                 // 用于控制开始和结束
 	SPxRTSPArg        m_sRTSPArg;
 
-
 public:
 	afx_msg void OnBnClickedCheckSaveRtspProcessInfo2File();
 	void ActivateItem();
 	afx_msg void OnBnClickedCheckRtspClearPackageList();
+	void InitCheckBox();
 }; 
