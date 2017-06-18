@@ -17,6 +17,8 @@ StreamingMediaTools for analyze the rtmp/rtsp stream.
   将RTMP流保存为FLV文件。
   
 ## ToDoList
+- RTSP 增加tcp或udp拉流方式选择
+
 - Save a rtsp stream to a .mp4 file.
 
 - Add SPS/PPS parser for H.264.
