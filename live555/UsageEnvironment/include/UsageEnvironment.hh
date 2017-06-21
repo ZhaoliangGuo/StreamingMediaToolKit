@@ -46,6 +46,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #define _O_BINARY O_BINARY
 #endif
 
+#include <stdio.h>
+
 enum EPxRTSPState
 {
 	kePxRTSPState_Invalid = -1,
@@ -117,6 +119,12 @@ public:
 
 public:
 	void WriteInfo2File(char *in_szFileName, char *in_szMsgBuffer);
+
+public:
+	char szVideoFileName[_MAX_PATH];
+	char szAudioFileName[_MAX_PATH];
+    //bool m_bVideoRecording;
+	bool m_bAudioStopRecord;
 };
 
 typedef void TaskFunc(void* clientData);
